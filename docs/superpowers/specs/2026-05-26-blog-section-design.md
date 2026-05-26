@@ -87,9 +87,11 @@ As you can see, running more iterations converges...
 
 ### Blog Layout
 
-The `BlogPost.astro` layout reuses the nav/footer structure from the landing
-page. Same dark theme, same brand CSS variables (`--brand`, `--dark`, etc.),
-same font stack.
+The nav and footer markup currently live inline in `index.astro`. Since the
+blog layout needs the same nav/footer, extract them into shared Astro
+components (`src/components/Nav.astro`, `src/components/Footer.astro`) and
+use them in both `index.astro` and `BlogPost.astro`. Same dark theme, same
+brand CSS variables (`--brand`, `--dark`, etc.), same font stack.
 
 ### Prose Styling
 
