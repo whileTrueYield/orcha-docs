@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
-import logo from '../assets/logo-with-text.png';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
 import simulator from '../assets/screenshots/schedule_simulation_predictor.png';
 import swimlanes from '../assets/screenshots/scheduler_swimlanes.png';
 import gantt from '../assets/screenshots/scheduler_gantt_chart.png';
@@ -55,32 +56,6 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 				text-decoration: underline;
 			}
 
-			/* Nav */
-			nav {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				padding: 1.5rem 2rem;
-				max-width: 1200px;
-				margin: 0 auto;
-			}
-			.nav-brand {
-				display: flex;
-				align-items: center;
-				text-decoration: none;
-			}
-			.nav-brand :global(img) {
-				height: 36px;
-			}
-			.nav-links {
-				display: flex;
-				gap: 2rem;
-				align-items: center;
-			}
-			.nav-links a {
-				color: var(--gray-200);
-				font-size: 0.95rem;
-			}
 			.btn {
 				display: inline-block;
 				padding: 0.6rem 1.4rem;
@@ -254,39 +229,15 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 				flex-wrap: wrap;
 			}
 
-			/* Footer */
-			footer {
-				border-top: 1px solid var(--gray-700);
-				padding: 2rem;
-				text-align: center;
-				color: var(--gray-400);
-				font-size: 0.9rem;
-			}
-			footer a {
-				color: var(--gray-400);
-			}
-
 			@media (max-width: 768px) {
 				.hero h1 {
 					font-size: 2.2rem;
-				}
-				.nav-links {
-					gap: 1rem;
 				}
 			}
 		</style>
 	</head>
 	<body>
-		<nav>
-			<a href="/" class="nav-brand">
-				<Image src={logo} alt="Orcha" height={36} />
-			</a>
-			<div class="nav-links">
-				<a href="/what-is-orcha">Docs</a>
-				<a href="https://github.com/whileTrueYield/orcha">GitHub</a>
-				<a href="https://app.orcha.run" class="btn btn-primary">Try Orcha</a>
-			</div>
-		</nav>
+		<Nav />
 
 		<section class="hero">
 			<h1>
@@ -440,11 +391,6 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 			</div>
 		</section>
 
-		<footer>
-			<p>
-				Orcha is open source under <a href="https://github.com/whileTrueYield/orcha/blob/main/LICENSE">FSL-1.1-MIT</a>.
-				Built by <a href="https://github.com/whileTrueYield">whileTrueYield</a>.
-			</p>
-		</footer>
+		<Footer />
 	</body>
 </html>
