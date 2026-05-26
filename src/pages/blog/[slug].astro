@@ -1,0 +1,25 @@
+---
+/*
+ * Dynamic route for individual blog posts.
+ *
+ * Uses Astro's content collection API to generate a static page for each
+ * blog entry. The MDX content is rendered inside the BlogPost layout.
+ */
+import { getCollection, render } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: { post },
+	}));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogPost title={post.data.title} description={post.data.description} date={post.data.date}>
+	<Content />
+</BlogPost>
