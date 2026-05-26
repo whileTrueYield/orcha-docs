@@ -1,0 +1,27 @@
+---
+/*
+ * Shared site footer used by the landing page and blog layouts.
+ *
+ * Exports: default Astro component (no props).
+ */
+---
+
+<footer>
+	<p>
+		Orcha is open source under <a href="https://github.com/whileTrueYield/orcha/blob/main/LICENSE">FSL-1.1-MIT</a>.
+		Built by <a href="https://github.com/whileTrueYield">whileTrueYield</a>.
+	</p>
+</footer>
+
+<style>
+	footer {
+		border-top: 1px solid var(--gray-700);
+		padding: 2rem;
+		text-align: center;
+		color: var(--gray-400);
+		font-size: 0.9rem;
+	}
+	footer a {
+		color: var(--gray-400);
+	}
+</style>
