@@ -1,0 +1,55 @@
+---
+/*
+ * Blog index page — lists all published posts sorted by date descending.
+ *
+ * Filters out draft posts in production builds. In dev mode, drafts are
+ * included so authors can preview them.
+ */
+import { getCollection } from 'astro:content';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/blog.css';
+
+const posts = (await getCollection('blog', ({ data }) => {
+	return import.meta.env.PROD ? !data.draft : true;
+})).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Blog — Orcha</title>
+		<meta name="description" content="Updates, insights, and technical deep-dives from the Orcha team." />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	</head>
+	<body>
+		<Nav />
+		<main class="blog-container">
+			<div class="blog-index-header">
+				<h1>Blog</h1>
+			</div>
+			{posts.length === 0 ? (
+				<p>No posts yet. Check back soon.</p>
+			) : (
+				<ul class="blog-post-list">
+					{posts.map((post) => {
+						const formattedDate = post.data.date.toLocaleDateString('en-US', {
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric',
+						});
+						return (
+							<li class="blog-post-item">
+								<time datetime={post.data.date.toISOString().slice(0, 10)}>{formattedDate}</time>
+								<h2><a href={`/blog/${post.id}`}>{post.data.title}</a></h2>
+								<p>{post.data.description}</p>
+							</li>
+						);
+					})}
+				</ul>
+			)}
+		</main>
+		<Footer />
+	</body>
+</html>
