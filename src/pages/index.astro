@@ -1,0 +1,450 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-with-text.png';
+import simulator from '../assets/screenshots/schedule_simulation_predictor.png';
+import swimlanes from '../assets/screenshots/scheduler_swimlanes.png';
+import gantt from '../assets/screenshots/scheduler_gantt_chart.png';
+import taskSwitcher from '../assets/screenshots/task_switcher.png';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Orcha — Project scheduling powered by Monte Carlo simulation</title>
+		<meta
+			name="description"
+			content="Orcha runs 2,000 simulations of your team's workload and returns delivery dates at 80% confidence. Open source, self-hostable."
+		/>
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			:root {
+				--brand: #00bcd4;
+				--brand-dark: #00838f;
+				--dark: #17181c;
+				--gray-900: #1e2028;
+				--gray-800: #24272f;
+				--gray-700: #353841;
+				--gray-400: #888b96;
+				--gray-300: #a0a3ab;
+				--gray-200: #c0c2c7;
+				--white: #ffffff;
+			}
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+					sans-serif;
+				background: var(--dark);
+				color: var(--gray-200);
+				line-height: 1.6;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			:global(img) {
+				height: auto;
+			}
+			a {
+				color: var(--brand);
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+
+			/* Nav */
+			nav {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 1.5rem 2rem;
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+			.nav-brand {
+				display: flex;
+				align-items: center;
+				text-decoration: none;
+			}
+			.nav-brand :global(img) {
+				height: 36px;
+			}
+			.nav-links {
+				display: flex;
+				gap: 2rem;
+				align-items: center;
+			}
+			.nav-links a {
+				color: var(--gray-200);
+				font-size: 0.95rem;
+			}
+			.btn {
+				display: inline-block;
+				padding: 0.6rem 1.4rem;
+				border-radius: 6px;
+				font-weight: 600;
+				font-size: 0.95rem;
+				transition: opacity 0.2s;
+			}
+			.btn:hover {
+				text-decoration: none;
+				opacity: 0.9;
+			}
+			.btn-primary {
+				background: var(--brand-dark);
+				color: var(--white);
+			}
+			.btn-secondary {
+				border: 1px solid var(--gray-700);
+				color: var(--white);
+			}
+
+			/* Hero */
+			.hero {
+				text-align: center;
+				padding: 6rem 2rem 4rem;
+				max-width: 800px;
+				margin: 0 auto;
+			}
+			.hero h1 {
+				font-size: 3.2rem;
+				font-weight: 700;
+				color: var(--white);
+				line-height: 1.15;
+				margin-bottom: 1.5rem;
+			}
+			.hero h1 span {
+				color: var(--brand);
+			}
+			.hero p {
+				font-size: 1.25rem;
+				color: var(--gray-400);
+				margin-bottom: 2.5rem;
+				max-width: 600px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			.hero-buttons {
+				display: flex;
+				gap: 1rem;
+				justify-content: center;
+				flex-wrap: wrap;
+			}
+
+			/* Screenshot showcase */
+			.showcase {
+				max-width: 1100px;
+				margin: 2rem auto 0;
+				padding: 0 2rem;
+			}
+			.showcase :global(img) {
+				width: 100%;
+				border-radius: 12px;
+				outline: 1px solid rgba(255, 255, 255, 0.1);
+				outline-offset: -1px;
+				box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+			}
+
+			/* Philosophy */
+			.philosophy {
+				max-width: 1000px;
+				margin: 8rem auto;
+				padding: 0 2rem;
+			}
+			.section-header {
+				text-align: center;
+				margin-bottom: 3rem;
+			}
+			.section-header h2 {
+				font-size: 2.2rem;
+				color: var(--white);
+				margin-bottom: 0.75rem;
+			}
+			.section-header p {
+				color: var(--gray-400);
+				font-size: 1.1rem;
+				max-width: 520px;
+				margin: 0 auto;
+			}
+			.philosophy-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 1.5rem;
+			}
+			.philosophy-card {
+				background: var(--gray-900);
+				outline: 1px solid var(--gray-700);
+				outline-offset: -1px;
+				border-radius: 10px;
+				padding: 1.8rem;
+			}
+			.philosophy-card h3 {
+				color: var(--white);
+				font-size: 1rem;
+				margin-bottom: 0.5rem;
+			}
+			.philosophy-card p {
+				font-size: 0.925rem;
+				color: var(--gray-400);
+				line-height: 1.55;
+			}
+
+			/* Features */
+			.features {
+				max-width: 1100px;
+				margin: 8rem auto;
+				padding: 0 2rem;
+			}
+			.feature-screenshot :global(img) {
+				width: 100%;
+				border-radius: 10px 10px 0 0;
+				outline: 1px solid rgba(255, 255, 255, 0.1);
+				outline-offset: -1px;
+				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+			}
+			.feature-card {
+				margin-bottom: 4rem;
+			}
+			.feature-card:last-child {
+				margin-bottom: 0;
+			}
+			.feature-card-caption {
+				background: var(--gray-900);
+				outline: 1px solid var(--gray-700);
+				outline-offset: -1px;
+				border-radius: 0 0 10px 10px;
+				padding: 1.5rem 2rem;
+				margin-top: -6px;
+			}
+			.feature-card-caption h3 {
+				font-size: 1.2rem;
+				color: var(--white);
+				margin-bottom: 0.4rem;
+			}
+			.feature-card-caption p {
+				color: var(--gray-400);
+				font-size: 0.95rem;
+				line-height: 1.55;
+			}
+
+			/* CTA */
+			.cta {
+				text-align: center;
+				padding: 6rem 2rem;
+				max-width: 600px;
+				margin: 0 auto;
+			}
+			.cta h2 {
+				font-size: 2.2rem;
+				color: var(--white);
+				margin-bottom: 1rem;
+			}
+			.cta p {
+				color: var(--gray-400);
+				font-size: 1.1rem;
+				margin-bottom: 2rem;
+			}
+			.cta-buttons {
+				display: flex;
+				gap: 1rem;
+				justify-content: center;
+				flex-wrap: wrap;
+			}
+
+			/* Footer */
+			footer {
+				border-top: 1px solid var(--gray-700);
+				padding: 2rem;
+				text-align: center;
+				color: var(--gray-400);
+				font-size: 0.9rem;
+			}
+			footer a {
+				color: var(--gray-400);
+			}
+
+			@media (max-width: 768px) {
+				.hero h1 {
+					font-size: 2.2rem;
+				}
+				.nav-links {
+					gap: 1rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<nav>
+			<a href="/" class="nav-brand">
+				<Image src={logo} alt="Orcha" height={36} />
+			</a>
+			<div class="nav-links">
+				<a href="/what-is-orcha">Docs</a>
+				<a href="https://github.com/whileTrueYield/orcha">GitHub</a>
+				<a href="https://app.orcha.run" class="btn btn-primary">Try Orcha</a>
+			</div>
+		</nav>
+
+		<section class="hero">
+			<h1>
+				Stop guessing delivery dates.<br />
+				<span>Simulate them.</span>
+			</h1>
+			<p>
+				Orcha runs 2,000 Monte Carlo simulations of your team's workload
+				and returns delivery dates at 80% confidence. When priorities shift,
+				it re-simulates in under a minute.
+			</p>
+			<div class="hero-buttons">
+				<a href="https://app.orcha.run" class="btn btn-primary">Get started</a>
+				<a href="/what-is-orcha" class="btn btn-secondary">Read the docs</a>
+			</div>
+		</section>
+
+		<div class="showcase">
+			<Image
+				src={simulator}
+				alt=""
+				widths={[600, 900, 1100]}
+				sizes="(max-width: 768px) 100vw, 1100px"
+			/>
+		</div>
+
+		<section class="philosophy">
+			<div class="section-header">
+				<h2>Built from real pain</h2>
+				<p>
+					Every opinion in Orcha came from managing teams where priorities
+					changed weekly and the tools couldn't keep up.
+				</p>
+			</div>
+			<div class="philosophy-grid">
+				<div class="philosophy-card">
+					<h3>60 seconds beats 60 minutes</h3>
+					<p>
+						Replanning meetings produce worse results than a minute of
+						simulation. Stop debating delivery dates in a room — run the
+						numbers.
+					</p>
+				</div>
+				<div class="philosophy-card">
+					<h3>One person is noisy. A team converges.</h3>
+					<p>
+						Individual estimates are unreliable, but statistical models over a
+						team converge. Three estimates per ticket create a beta distribution
+						that the simulator samples from — probability, not guesswork.
+					</p>
+				</div>
+				<div class="philosophy-card">
+					<h3>Track time without tracking time</h3>
+					<p>
+						If you ask people to log hours, they won't. Or they'll lie. Orcha
+						tracks time automatically — just activate a task and switch when
+						you switch.
+					</p>
+				</div>
+				<div class="philosophy-card">
+					<h3>Priorities are relative, not absolute</h3>
+					<p>
+						P1/P2/P3 labels are broken — everything becomes P1. Orcha uses a
+						single ordered stack where tickets, tags, and projects are ranked
+						against each other. No ties, no ambiguity.
+					</p>
+				</div>
+				<div class="philosophy-card">
+					<h3>Simple systems, predictable outcomes</h3>
+					<p>
+						Linear workflows by design. Not because real work is simple, but
+						because complex workflows create hidden states where work gets
+						lost.
+					</p>
+				</div>
+				<div class="philosophy-card">
+					<h3>Every input earns its keep</h3>
+					<p>
+						Best case, most likely, worst case. Three numbers per ticket — the
+						right trade-off between accuracy and busywork. If Orcha asks for
+						something, it's because the simulation needs it.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="features">
+			<div class="section-header">
+				<h2>See the impact before you commit</h2>
+				<p>
+					Every view is derived from the same simulation. Change a priority
+					and the whole picture updates.
+				</p>
+			</div>
+
+			<div class="feature-card">
+				<div class="feature-screenshot">
+					<Image src={swimlanes} alt="" widths={[600, 900, 1100]} sizes="(max-width: 768px) 100vw, 1100px" />
+				</div>
+				<div class="feature-card-caption">
+					<h3>Swimlanes</h3>
+					<p>
+						One row per engineer. See who's working on what, what's ready,
+						and what's coming up. Drag a ticket to reassign and the schedule
+						recalculates automatically — always respecting the priorities you've set.
+					</p>
+				</div>
+			</div>
+			<div class="feature-card">
+				<div class="feature-screenshot">
+					<Image src={gantt} alt="" widths={[600, 900, 1100]} sizes="(max-width: 768px) 100vw, 1100px" />
+				</div>
+				<div class="feature-card-caption">
+					<h3>Gantt</h3>
+					<p>
+						Project timelines at day, week, or month scale. Unlike traditional
+						Gantt charts, these aren't manually maintained — the simulator keeps
+						them current as priorities and assignments change.
+					</p>
+				</div>
+			</div>
+			<div class="feature-card">
+				<div class="feature-screenshot">
+					<Image src={taskSwitcher} alt="" widths={[600, 900, 1100]} sizes="(max-width: 768px) 100vw, 1100px" />
+				</div>
+				<div class="feature-card-caption">
+					<h3>Task Switcher</h3>
+					<p>
+						Your active task and recommended next task, always visible at the
+						top of the screen. Click to switch — time tracking happens in the
+						background.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="cta">
+			<h2>Open source. Self-hostable.</h2>
+			<p>
+				Run Orcha on your own infrastructure or use the hosted version.
+				Licensed under FSL-1.1-MIT — free to use, converts to MIT after two
+				years.
+			</p>
+			<div class="cta-buttons">
+				<a href="https://app.orcha.run" class="btn btn-primary">Get started</a>
+				<a
+					href="https://github.com/whileTrueYield/orcha"
+					class="btn btn-secondary">View on GitHub</a
+				>
+				<a href="/self-hosting" class="btn btn-secondary">Self-host guide</a>
+			</div>
+		</section>
+
+		<footer>
+			<p>
+				Orcha is open source under <a href="https://github.com/whileTrueYield/orcha/blob/main/LICENSE">FSL-1.1-MIT</a>.
+				Built by <a href="https://github.com/whileTrueYield">whileTrueYield</a>.
+			</p>
+		</footer>
+	</body>
+</html>

@@ -1,0 +1,361 @@
+/*
+ * Custom styles for the Orcha documentation site.
+ *
+ * Overrides Starlight's defaults with refined typography, better prose
+ * styling, polished code blocks, and improved spacing.
+ *
+ * Color strategy: only override accent colors per theme. The gray scale
+ * and text colors are left to Starlight's built-in theme system, which
+ * maps gray-1 (lightest) through gray-6 (darkest) to the right semantic
+ * roles in each theme. Custom styles avoid referencing specific gray
+ * levels for text color — they use Starlight's inherited text color
+ * instead.
+ */
+
+/* ─── Shared tokens ─── */
+
+:root {
+	--sl-font: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+	--sl-font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", "Fira Code",
+		Menlo, monospace;
+	--sl-text-h1: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
+	--sl-text-h2: clamp(1.35rem, 1.2rem + 0.75vw, 1.65rem);
+	--sl-text-h3: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
+	--sl-text-body: 1rem;
+	--sl-line-height: 1.8;
+	--sl-line-height-headings: 1.25;
+}
+
+/* ─── Dark theme ─── */
+
+:root[data-theme="dark"] {
+	--sl-color-accent-low: #0e2a33;
+	--sl-color-accent: #00bcd4;
+	--sl-color-accent-high: #b2ebf2;
+	--sl-color-white: #f0f2f5;
+	--sl-color-gray-1: #e0e3e8;
+	--sl-color-gray-2: #b0b4bc;
+	--sl-color-gray-3: #7d828e;
+	--sl-color-gray-4: #4e5360;
+	--sl-color-gray-5: #2c303a;
+	--sl-color-gray-6: #1e2028;
+	--sl-color-black: #13141a;
+}
+
+/*
+ * Light theme: Starlight maps --sl-color-black to the page background
+ * and --sl-color-white to the strongest text in ALL themes. So in light
+ * mode, "black" must be light and "white" must be dark. The gray scale
+ * also inverts — gray-6 is near-background (lightest), gray-1 is
+ * near-text (darkest).
+ */
+:root[data-theme="light"] {
+	--sl-color-accent-low: #e0f7fa;
+	--sl-color-accent: #00838f;
+	--sl-color-accent-high: #004d56;
+	--sl-color-white: #1a1c23;
+	--sl-color-gray-1: #2e323c;
+	--sl-color-gray-2: #454b5a;
+	--sl-color-gray-3: #6c7282;
+	--sl-color-gray-4: #9ca1ad;
+	--sl-color-gray-5: #d0d3da;
+	--sl-color-gray-6: #eceef2;
+	--sl-color-black: #fafbfc;
+}
+
+/* ─── Global reset/refinements ─── */
+
+html {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Main content typography ─── */
+
+.sl-markdown-content {
+	font-size: var(--sl-text-body);
+	line-height: var(--sl-line-height);
+}
+
+.sl-markdown-content > * + * {
+	margin-top: 1.5em;
+}
+
+/* ─── Headings ─── */
+
+.sl-markdown-content h1 {
+	font-size: var(--sl-text-h1);
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	line-height: var(--sl-line-height-headings);
+	text-wrap: balance;
+	margin-top: 0;
+	padding-bottom: 0.3em;
+	border-bottom: 1px solid var(--sl-color-gray-5);
+}
+
+.sl-markdown-content h2 {
+	font-size: var(--sl-text-h2);
+	font-weight: 650;
+	letter-spacing: -0.02em;
+	line-height: var(--sl-line-height-headings);
+	text-wrap: balance;
+	margin-top: 2.5em;
+	padding-bottom: 0.25em;
+	border-bottom: 1px solid var(--sl-color-gray-5);
+}
+
+.sl-markdown-content h3 {
+	font-size: var(--sl-text-h3);
+	font-weight: 600;
+	letter-spacing: -0.015em;
+	line-height: 1.35;
+	text-wrap: balance;
+	margin-top: 2em;
+}
+
+.sl-markdown-content h4 {
+	font-size: 1.05rem;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	line-height: 1.4;
+	margin-top: 1.75em;
+}
+
+.sl-markdown-content h2 + *,
+.sl-markdown-content h3 + *,
+.sl-markdown-content h4 + * {
+	margin-top: 0.75em;
+}
+
+/* ─── Paragraphs ─── */
+
+.sl-markdown-content p {
+	text-wrap: pretty;
+}
+
+/* ─── Links ─── */
+
+.sl-markdown-content a:not([class]) {
+	color: var(--sl-color-accent-high);
+	text-decoration: underline;
+	text-decoration-color: color-mix(in srgb, var(--sl-color-accent) 40%, transparent);
+	text-underline-offset: 0.15em;
+	text-decoration-thickness: 1px;
+	transition: text-decoration-color 0.15s ease, color 0.15s ease;
+}
+
+.sl-markdown-content a:not([class]):hover {
+	color: var(--sl-color-accent);
+	text-decoration-color: var(--sl-color-accent);
+}
+
+/* ─── Lists ─── */
+
+.sl-markdown-content ul,
+.sl-markdown-content ol {
+	padding-left: 1.5em;
+}
+
+.sl-markdown-content li {
+	margin-top: 0.35em;
+}
+
+.sl-markdown-content li::marker {
+	color: var(--sl-color-gray-3);
+}
+
+/* ─── Blockquotes ─── */
+
+.sl-markdown-content blockquote {
+	border-left: 3px solid var(--sl-color-accent);
+	background: color-mix(in srgb, var(--sl-color-accent) 5%, var(--sl-color-gray-6));
+	border-radius: 0 0.5rem 0.5rem 0;
+	padding: 1em 1.25em;
+	margin-left: 0;
+	margin-right: 0;
+	font-size: 0.925rem;
+}
+
+.sl-markdown-content blockquote p {
+	opacity: 0.85;
+}
+
+.sl-markdown-content blockquote p:first-child {
+	margin-top: 0;
+}
+
+.sl-markdown-content blockquote p:last-child {
+	margin-bottom: 0;
+}
+
+/* ─── Inline code ─── */
+
+.sl-markdown-content :not(pre) > code {
+	background: color-mix(in srgb, var(--sl-color-gray-4) 15%, transparent);
+	border: 1px solid color-mix(in srgb, var(--sl-color-gray-4) 30%, transparent);
+	border-radius: 0.3rem;
+	padding: 0.15em 0.35em;
+	font-size: 0.875em;
+	font-weight: 450;
+	color: var(--sl-color-accent-high);
+	word-break: break-word;
+}
+
+/* ─── Code blocks ─── */
+
+.sl-markdown-content pre {
+	border: 1px solid var(--sl-color-gray-5);
+	border-radius: 0.6rem;
+	font-size: 0.875rem;
+	line-height: 1.7;
+	padding: 1em 1.25em;
+}
+
+/* ─── Images / screenshots ─── */
+
+.sl-markdown-content img {
+	border-radius: 0.6rem;
+	border: 1px solid color-mix(in srgb, var(--sl-color-gray-4) 30%, transparent);
+	box-shadow: 0 4px 24px color-mix(in srgb, var(--sl-color-black) 20%, transparent);
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+/* ─── Horizontal rules ─── */
+
+.sl-markdown-content hr {
+	border: none;
+	border-top: 1px solid var(--sl-color-gray-5);
+	margin: 2.5em 0;
+}
+
+/* ─── Tables ─── */
+
+.sl-markdown-content table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9rem;
+}
+
+.sl-markdown-content th {
+	font-weight: 600;
+	text-align: left;
+	padding: 0.6em 1em;
+	border-bottom: 2px solid var(--sl-color-gray-5);
+}
+
+.sl-markdown-content td {
+	padding: 0.6em 1em;
+	border-bottom: 1px solid var(--sl-color-gray-5);
+}
+
+.sl-markdown-content tr:last-child td {
+	border-bottom: none;
+}
+
+/* ─── Strong text ─── */
+
+.sl-markdown-content strong {
+	font-weight: 600;
+}
+
+/* ─── Starlight callouts/admonitions ─── */
+
+.starlight-aside {
+	border-radius: 0.6rem;
+	border-width: 1px;
+	border-left-width: 3px;
+	padding: 1em 1.25em;
+	font-size: 0.925rem;
+}
+
+.starlight-aside .starlight-aside__title {
+	font-weight: 600;
+	font-size: 0.9rem;
+	text-transform: none;
+	gap: 0.4em;
+}
+
+/* ─── Sidebar: Accent Line style ─── */
+
+nav.sidebar .top-level > li + li {
+	margin-top: 0.5rem;
+}
+
+nav.sidebar a {
+	font-size: 0.875rem;
+	border-radius: 0;
+	padding: 0.35em 0.75em;
+	background: none;
+	border-left: 2px solid transparent;
+	transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+nav.sidebar a:hover {
+	background: none;
+	border-left-color: var(--sl-color-gray-4);
+}
+
+nav.sidebar a[aria-current="page"] {
+	background: none;
+	color: var(--sl-color-accent);
+	border-left-color: var(--sl-color-accent);
+	font-weight: 500;
+}
+
+/* Sidebar group labels */
+nav.sidebar .group-label,
+nav.sidebar summary {
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	padding: 0.35em 0.75em;
+}
+
+/* ─── Table of contents (right sidebar) ─── */
+
+starlight-toc a {
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	transition: color 0.15s ease;
+}
+
+starlight-toc a[aria-current="true"] {
+	color: var(--sl-color-accent);
+	font-weight: 500;
+}
+
+/* ─── Prev/Next pagination links ─── */
+
+.pagination-links a {
+	border-radius: 0.6rem;
+	transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.pagination-links a:hover {
+	border-color: var(--sl-color-accent);
+	background: color-mix(in srgb, var(--sl-color-accent) 5%, transparent);
+}
+
+/* ─── Header: slightly darker in light mode ─── */
+
+:root[data-theme="light"] header {
+	background: #f0f1f4;
+	border-bottom: 1px solid var(--sl-color-gray-5);
+}
+
+/* ─── Search button ─── */
+
+site-search button {
+	border-radius: 0.5rem !important;
+}
+
+/* ─── Page title (outside markdown) ─── */
+
+h1#_top {
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	line-height: var(--sl-line-height-headings);
+}
