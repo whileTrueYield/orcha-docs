@@ -15,6 +15,7 @@ export default defineConfig({
 			},
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/whileTrueYield/orcha' },
+				{ icon: 'pen', label: 'Blog', href: '/blog' },
 			],
 			customCss: ['./src/styles/custom.css'],
 			sidebar: [
