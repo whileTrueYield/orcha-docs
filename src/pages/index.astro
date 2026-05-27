@@ -1,4 +1,11 @@
 ---
+/*
+ * Orcha landing page — converts frustrated engineering leads and technical
+ * founders who know their PM tool is passive and want something that thinks.
+ *
+ * Arc: Problem → Demo → Philosophy → Evidence → Blog depth → CTA
+ */
+import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
@@ -6,6 +13,15 @@ import simulator from '../assets/screenshots/schedule_simulation_predictor.png';
 import swimlanes from '../assets/screenshots/scheduler_swimlanes.png';
 import gantt from '../assets/screenshots/scheduler_gantt_chart.png';
 import taskSwitcher from '../assets/screenshots/task_switcher.png';
+
+const allPosts = (await getCollection('blog', ({ data }) => {
+	return import.meta.env.PROD ? !data.draft : true;
+})).filter(post => post.id !== 'hello');
+
+const featured = allPosts.filter(p => p.data.featured);
+const featuredPosts = (featured.length >= 3 ? featured : allPosts)
+	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+	.slice(0, 3);
 ---
 
 <html lang="en">
@@ -15,7 +31,7 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 		<title>Orcha — Project scheduling powered by Monte Carlo simulation</title>
 		<meta
 			name="description"
-			content="Orcha runs 2,000 simulations of your team's workload and returns delivery dates at 80% confidence. Open source, self-hostable."
+			content="Project scheduling powered by Monte Carlo simulation. Finally, ship dates you can trust. Open source, self-hostable."
 		/>
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<style>
@@ -79,33 +95,31 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 
 			/* Hero */
 			.hero {
-				text-align: center;
 				padding: 6rem 2rem 4rem;
-				max-width: 800px;
+				max-width: 1100px;
 				margin: 0 auto;
 			}
 			.hero h1 {
-				font-size: 3.2rem;
+				font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+				font-size: 2.6rem;
 				font-weight: 700;
 				color: var(--white);
 				line-height: 1.15;
+				letter-spacing: -0.02em;
 				margin-bottom: 1.5rem;
 			}
 			.hero h1 span {
 				color: var(--brand);
 			}
-			.hero p {
-				font-size: 1.25rem;
+			.hero-sub {
+				font-size: 1.15rem;
 				color: var(--gray-400);
 				margin-bottom: 2.5rem;
-				max-width: 600px;
-				margin-left: auto;
-				margin-right: auto;
+				max-width: 560px;
 			}
 			.hero-buttons {
 				display: flex;
 				gap: 1rem;
-				justify-content: center;
 				flex-wrap: wrap;
 			}
 
@@ -123,12 +137,7 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 				box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
 			}
 
-			/* Philosophy */
-			.philosophy {
-				max-width: 1000px;
-				margin: 8rem auto;
-				padding: 0 2rem;
-			}
+			/* Shared section header */
 			.section-header {
 				text-align: center;
 				margin-bottom: 3rem;
@@ -143,6 +152,13 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 				font-size: 1.1rem;
 				max-width: 520px;
 				margin: 0 auto;
+			}
+
+			/* Philosophy */
+			.philosophy {
+				max-width: 1000px;
+				margin: 8rem auto 4rem;
+				padding: 0 2rem;
 			}
 			.philosophy-grid {
 				display: grid;
@@ -167,48 +183,103 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 				line-height: 1.55;
 			}
 
-			/* Features */
-			.features {
-				max-width: 1100px;
-				margin: 8rem auto;
-				padding: 0 2rem;
+			/* Evidence carousel */
+			.evidence {
+				margin: 4rem 0;
+				overflow: hidden;
 			}
-			.feature-screenshot :global(img) {
+			.carousel-track {
+				display: flex;
+				gap: 2rem;
+				overflow-x: auto;
+				scroll-snap-type: x mandatory;
+				scroll-behavior: smooth;
+				-webkit-overflow-scrolling: touch;
+				padding: 0 max(2rem, calc((100vw - 900px) / 2));
+				padding-bottom: 0.75rem;
+			}
+			.carousel-track::-webkit-scrollbar {
+				height: 6px;
+			}
+			.carousel-track::-webkit-scrollbar-track {
+				background: var(--gray-900);
+				border-radius: 3px;
+			}
+			.carousel-track::-webkit-scrollbar-thumb {
+				background: var(--gray-700);
+				border-radius: 3px;
+			}
+			.carousel-slide {
+				flex: 0 0 min(900px, 85vw);
+				scroll-snap-align: center;
+				min-width: 0;
+			}
+			.carousel-slide :global(img) {
 				width: 100%;
 				border-radius: 10px 10px 0 0;
 				outline: 1px solid rgba(255, 255, 255, 0.1);
 				outline-offset: -1px;
-				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 			}
-			.feature-card {
-				margin-bottom: 4rem;
-			}
-			.feature-card:last-child {
-				margin-bottom: 0;
-			}
-			.feature-card-caption {
+			.carousel-caption {
 				background: var(--gray-900);
 				outline: 1px solid var(--gray-700);
 				outline-offset: -1px;
 				border-radius: 0 0 10px 10px;
-				padding: 1.5rem 2rem;
-				margin-top: -6px;
+				padding: 1.2rem 1.5rem;
+				margin-top: -4px;
 			}
-			.feature-card-caption h3 {
-				font-size: 1.2rem;
+			.carousel-caption h3 {
+				font-size: 1.1rem;
 				color: var(--white);
-				margin-bottom: 0.4rem;
+				margin-bottom: 0.3rem;
 			}
-			.feature-card-caption p {
+			.carousel-caption p {
 				color: var(--gray-400);
-				font-size: 0.95rem;
-				line-height: 1.55;
+				font-size: 0.9rem;
+				line-height: 1.5;
+			}
+
+			/* Blog teasers */
+			.blog-teasers {
+				max-width: 1000px;
+				margin: 4rem auto;
+				padding: 0 2rem;
+			}
+			.blog-teaser-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 1.5rem;
+			}
+			.blog-teaser-card {
+				display: block;
+				background: var(--gray-900);
+				outline: 1px solid var(--gray-700);
+				outline-offset: -1px;
+				border-radius: 10px;
+				padding: 1.5rem;
+				text-decoration: none;
+				transition: outline-color 0.2s;
+			}
+			.blog-teaser-card:hover {
+				outline-color: var(--brand);
+				text-decoration: none;
+			}
+			.blog-teaser-card h3 {
+				font-size: 1rem;
+				color: var(--white);
+				margin-bottom: 0.5rem;
+				line-height: 1.35;
+			}
+			.blog-teaser-card p {
+				font-size: 0.9rem;
+				color: var(--gray-400);
+				line-height: 1.5;
 			}
 
 			/* CTA */
 			.cta {
 				text-align: center;
-				padding: 6rem 2rem;
+				padding: 4rem 2rem 6rem;
 				max-width: 600px;
 				margin: 0 auto;
 			}
@@ -229,9 +300,35 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 				flex-wrap: wrap;
 			}
 
+			/* Scramble animation */
+			[data-scramble] .char {
+				display: inline-block;
+				min-width: 0.1em;
+			}
+			[data-scramble] .char.scrambling {
+				font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+				color: var(--brand);
+				opacity: 0.6;
+			}
+			[data-scramble] .char.resolved {
+				transition: color 0.3s, opacity 0.3s;
+				opacity: 1;
+			}
+
 			@media (max-width: 768px) {
+				.hero {
+					padding: 4rem 1.5rem 3rem;
+				}
 				.hero h1 {
-					font-size: 2.2rem;
+					font-size: 1.8rem;
+				}
+				.carousel-track {
+					padding: 0 1.5rem;
+					padding-bottom: 0.75rem;
+					gap: 1rem;
+				}
+				.carousel-slide {
+					flex: 0 0 min(900px, 90vw);
 				}
 			}
 		</style>
@@ -240,25 +337,24 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 		<Nav />
 
 		<section class="hero">
-			<h1>
-				Stop guessing delivery dates.<br />
-				<span>Simulate them.</span>
+			<h1 data-scramble>
+				Scheduling is a computation problem.<br />
+				<span>We treat it like one.</span>
 			</h1>
-			<p>
-				Orcha runs 2,000 Monte Carlo simulations of your team's workload
-				and returns delivery dates at 80% confidence. When priorities shift,
-				it re-simulates in under a minute.
+			<p class="hero-sub">
+				Orcha runs Monte Carlo simulations of your team's workload.
+				Ship dates you can trust — and plans you can change.
 			</p>
 			<div class="hero-buttons">
 				<a href="https://app.orcha.run" class="btn btn-primary">Get started</a>
-				<a href="/what-is-orcha" class="btn btn-secondary">Read the docs</a>
+				<a href="/blog" class="btn btn-secondary">Read the blog</a>
 			</div>
 		</section>
 
 		<div class="showcase">
 			<Image
 				src={simulator}
-				alt=""
+				alt="Orcha schedule simulation showing delivery date predictions with confidence intervals"
 				widths={[600, 900, 1100]}
 				sizes="(max-width: 768px) 100vw, 1100px"
 			/>
@@ -266,10 +362,10 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 
 		<section class="philosophy">
 			<div class="section-header">
-				<h2>Built from real pain</h2>
+				<h2>Designed from first principles</h2>
 				<p>
-					Every opinion in Orcha came from managing teams where priorities
-					changed weekly and the tools couldn't keep up.
+					Every design choice follows from one question: what actually
+					helps you decide?
 				</p>
 			</div>
 			<div class="philosophy-grid">
@@ -290,11 +386,11 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 					</p>
 				</div>
 				<div class="philosophy-card">
-					<h3>Track time without tracking time</h3>
+					<h3>The best data is the data you never had to enter</h3>
 					<p>
-						If you ask people to log hours, they won't. Or they'll lie. Orcha
-						tracks time automatically — just activate a task and switch when
-						you switch.
+						If you ask people to log hours, they won't — or they'll lie.
+						Orcha tracks time automatically. Just activate a task and switch
+						when you switch. Your velocity data stays honest without effort.
 					</p>
 				</div>
 				<div class="philosophy-card">
@@ -324,62 +420,83 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 			</div>
 		</section>
 
-		<section class="features">
-			<div class="section-header">
-				<h2>See the impact before you commit</h2>
-				<p>
-					Every view is derived from the same simulation. Change a priority
-					and the whole picture updates.
-				</p>
-			</div>
-
-			<div class="feature-card">
-				<div class="feature-screenshot">
-					<Image src={swimlanes} alt="" widths={[600, 900, 1100]} sizes="(max-width: 768px) 100vw, 1100px" />
+		<section class="evidence">
+			<div class="carousel-track">
+				<div class="carousel-slide">
+					<div class="carousel-image">
+						<Image
+							src={swimlanes}
+							alt="Swimlane view showing per-engineer task assignments with priority-aware scheduling"
+							widths={[600, 900, 1100]}
+							sizes="(max-width: 768px) 90vw, 900px"
+						/>
+					</div>
+					<div class="carousel-caption">
+						<h3>Swimlanes</h3>
+						<p>
+							One row per engineer. Drag a ticket to reassign and the schedule
+							recalculates — always respecting the priorities you've set.
+						</p>
+					</div>
 				</div>
-				<div class="feature-card-caption">
-					<h3>Swimlanes</h3>
-					<p>
-						One row per engineer. See who's working on what, what's ready,
-						and what's coming up. Drag a ticket to reassign and the schedule
-						recalculates automatically — always respecting the priorities you've set.
-					</p>
+				<div class="carousel-slide">
+					<div class="carousel-image">
+						<Image
+							src={gantt}
+							alt="Dynamic Gantt chart with simulation-driven timelines at week scale"
+							widths={[600, 900, 1100]}
+							sizes="(max-width: 768px) 90vw, 900px"
+						/>
+					</div>
+					<div class="carousel-caption">
+						<h3>Gantt</h3>
+						<p>
+							Project timelines at day, week, or month scale — computed by the
+							simulator, not maintained by hand.
+						</p>
+					</div>
 				</div>
-			</div>
-			<div class="feature-card">
-				<div class="feature-screenshot">
-					<Image src={gantt} alt="" widths={[600, 900, 1100]} sizes="(max-width: 768px) 100vw, 1100px" />
-				</div>
-				<div class="feature-card-caption">
-					<h3>Gantt</h3>
-					<p>
-						Project timelines at day, week, or month scale. Unlike traditional
-						Gantt charts, these aren't manually maintained — the simulator keeps
-						them current as priorities and assignments change.
-					</p>
-				</div>
-			</div>
-			<div class="feature-card">
-				<div class="feature-screenshot">
-					<Image src={taskSwitcher} alt="" widths={[600, 900, 1100]} sizes="(max-width: 768px) 100vw, 1100px" />
-				</div>
-				<div class="feature-card-caption">
-					<h3>Task Switcher</h3>
-					<p>
-						Your active task and recommended next task, always visible at the
-						top of the screen. Click to switch — time tracking happens in the
-						background.
-					</p>
+				<div class="carousel-slide">
+					<div class="carousel-image">
+						<Image
+							src={taskSwitcher}
+							alt="Task switcher with active task and automatic time tracking"
+							widths={[600, 900, 1100]}
+							sizes="(max-width: 768px) 90vw, 900px"
+						/>
+					</div>
+					<div class="carousel-caption">
+						<h3>Task Switcher</h3>
+						<p>
+							Your active task and recommended next, always visible. Click to
+							switch — time tracking happens in the background.
+						</p>
+					</div>
 				</div>
 			</div>
 		</section>
 
+		{featuredPosts.length > 0 && (
+			<section class="blog-teasers">
+				<div class="section-header">
+					<h2>Go deeper</h2>
+				</div>
+				<div class="blog-teaser-grid">
+					{featuredPosts.map((post) => (
+						<a href={`/blog/${post.id}`} class="blog-teaser-card">
+							<h3>{post.data.title}</h3>
+							<p>{post.data.description}</p>
+						</a>
+					))}
+				</div>
+			</section>
+		)}
+
 		<section class="cta">
-			<h2>Open source. Self-hostable.</h2>
+			<h2>Make your next decision an informed one.</h2>
 			<p>
-				Run Orcha on your own infrastructure or use the hosted version.
-				Licensed under FSL-1.1-MIT — free to use, converts to MIT after two
-				years.
+				Open source. Self-hostable. Licensed under FSL-1.1-MIT — free to
+				use, converts to MIT after two years.
 			</p>
 			<div class="cta-buttons">
 				<a href="https://app.orcha.run" class="btn btn-primary">Get started</a>
@@ -392,5 +509,91 @@ import taskSwitcher from '../assets/screenshots/task_switcher.png';
 		</section>
 
 		<Footer />
+		<script>
+			/*
+			 * Scramble animation — characters start as random math symbols
+			 * and resolve left-to-right into the headline. Reinforces the
+			 * "computation" thesis by making the hero literally compute itself.
+			 */
+			(function () {
+				const CHARS = '0123456789∑∫∂πσμ±√∞≈≠';
+				const RESOLVE_STAGGER = 35;
+				const CYCLES_PER_CHAR = 4;
+				const CYCLE_INTERVAL = 40;
+
+				function scramble(el) {
+					const span = el.querySelector('span');
+					const spanText = span ? span.textContent : '';
+					const preSpanText = el.firstChild.textContent || '';
+
+					const line1 = preSpanText.replace(/\n/g, '').trim();
+					const line2 = spanText.trim();
+					const allText = line1 + line2;
+
+					el.innerHTML = '';
+
+					const line1Wrapper = document.createElement('span');
+					const br = document.createElement('br');
+					const line2Wrapper = document.createElement('span');
+					line2Wrapper.className = el.classList.contains('hero-mono') ? '' : '';
+					line2Wrapper.style.color = 'var(--brand)';
+
+					const charEls = [];
+
+					function makeCharSpans(text, parent) {
+						for (const ch of text) {
+							if (ch === ' ') {
+								parent.appendChild(document.createTextNode(' '));
+								continue;
+							}
+							const s = document.createElement('span');
+							s.className = 'char scrambling';
+							s.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+							s.dataset.final = ch;
+							parent.appendChild(s);
+							charEls.push(s);
+						}
+					}
+
+					makeCharSpans(line1, line1Wrapper);
+					makeCharSpans(line2, line2Wrapper);
+
+					el.appendChild(line1Wrapper);
+					el.appendChild(br);
+					el.appendChild(line2Wrapper);
+
+					charEls.forEach((s, i) => {
+						const resolveAt = i * RESOLVE_STAGGER;
+						let cycleCount = 0;
+
+						const interval = setInterval(() => {
+							s.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+							cycleCount++;
+						}, CYCLE_INTERVAL);
+
+						setTimeout(() => {
+							clearInterval(interval);
+							s.textContent = s.dataset.final;
+							s.className = 'char resolved';
+						}, resolveAt + CYCLES_PER_CHAR * CYCLE_INTERVAL);
+					});
+				}
+
+				function init() {
+					document.querySelectorAll('[data-scramble]').forEach((el) => {
+						if (el.offsetParent !== null || el.closest('[hidden]') === null) {
+							scramble(el);
+						}
+					});
+				}
+
+				if (document.readyState === 'loading') {
+					document.addEventListener('DOMContentLoaded', init);
+				} else {
+					init();
+				}
+
+			})();
+		</script>
 	</body>
 </html>

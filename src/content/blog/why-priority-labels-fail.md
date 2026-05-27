@@ -3,6 +3,7 @@ title: "Why P1/P2/P3 Priority Labels Fail"
 description: "Priority labels destroy the relational information they claim to capture. Stack-ranking preserves it."
 date: 2026-06-16
 draft: true
+featured: true
 ---
 
 # Why P1/P2/P3 Priority Labels Fail

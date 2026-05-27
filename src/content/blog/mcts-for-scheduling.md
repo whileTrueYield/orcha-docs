@@ -3,6 +3,7 @@ title: "Monte Carlo Tree Search for Project Scheduling"
 description: "Reality is too complex for human planning. MCTS explores thousands of futures so you don't have to rely on your gut."
 date: 2026-06-30
 draft: true
+featured: true
 ---
 
 # Monte Carlo Tree Search for Project Scheduling

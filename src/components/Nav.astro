@@ -13,7 +13,7 @@ import logo from '../assets/logo-with-text.png';
 
 <nav>
 	<a href="/" class="nav-brand">
-		<Image src={logo} alt="Orcha" height={36} />
+		<Image src={logo} alt="Orcha" height={108} quality="max" />
 	</a>
 	<button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
 		<span class="nav-toggle-icon"></span>
@@ -43,6 +43,7 @@ import logo from '../assets/logo-with-text.png';
 	}
 	.nav-brand :global(img) {
 		height: 36px;
+		width: auto;
 	}
 	.nav-links {
 		display: flex;
