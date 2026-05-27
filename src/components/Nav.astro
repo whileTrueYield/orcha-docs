@@ -52,6 +52,7 @@ import logo from '../assets/logo-with-text.png';
 	.nav-links a {
 		color: var(--gray-200);
 		font-size: 0.95rem;
+		text-decoration: none;
 	}
 	.btn {
 		display: inline-block;
@@ -65,7 +66,7 @@ import logo from '../assets/logo-with-text.png';
 		text-decoration: none;
 		opacity: 0.9;
 	}
-	.btn-primary {
+	.nav-links .btn-primary {
 		background: var(--brand-dark);
 		color: var(--white);
 	}
@@ -135,6 +136,14 @@ import logo from '../assets/logo-with-text.png';
 		}
 		.nav-links.is-open {
 			display: flex;
+		}
+		.nav-links a {
+			width: 100%;
+		}
+		.nav-links .btn {
+			width: 100%;
+			text-align: center;
+			box-sizing: border-box;
 		}
 	}
 </style>

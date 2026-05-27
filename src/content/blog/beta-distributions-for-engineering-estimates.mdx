@@ -1,0 +1,66 @@
+---
+title: "Three-Point Estimation Solves the Wrong Problem"
+description: "Three-point estimation models task complexity in a vacuum. Beta distributions model delivery probability in reality."
+date: 2026-06-02
+draft: true
+---
+
+import { ThreePointEstimate } from "../../components/blog/ThreePointEstimate";
+import { RealityFactors } from "../../components/blog/RealityFactors";
+import { BetaDistribution } from "../../components/blog/BetaDistribution";
+
+# Three-Point Estimation Solves the Wrong Problem
+
+If you've ever estimated a software project, you've probably used three-point estimation — optimistic, most likely, pessimistic. It's clean, it's simple, and it's wrong. Not because the math is bad, but because the inputs are fiction.
+
+## The Hidden Assumption
+
+Three-point estimation assumes infinite resources, an isolated project, and predictable resource consumption. You estimate how long the *task* takes, as if the person doing it exists in a vacuum — fully available, fully focused, working on nothing else.
+
+The reality? People get sick. They take vacations. They work across timezones. They juggle multiple projects. They aren't available on the dot. Estimators carry biases they aren't even aware of. And plans change — rapidly — because you learn the most the moment you start building.
+
+<ThreePointEstimate client:visible />
+
+## The Construction Fallacy
+
+This model was borrowed from the construction industry, where it makes more sense. Construction is repetitive — you've poured a thousand foundations, you know how long the next one takes. The unknowns are fewer, and extensive surveys are done upfront to eliminate them.
+
+And yet, even construction fails to predict properly. Projects overrun. Budgets blow up. Despite having far fewer unknowns and far more historical data than we do.
+
+Now imagine what that means for software engineering, where most of what you do is discovery. You're working on the edge — building something that hasn't been built before, solving problems you haven't fully understood yet. You can uncover a lot of unknowns upfront, but you can't uncover all of them. Ever.
+
+## What Three-Point Estimation Gets Wrong
+
+The problem isn't the three points. It's that the three points only model the task — not the system the task lives in.
+
+What actually determines when work gets delivered?
+
+- **Availability** — is the person actually free to work on this, or are they split across three projects?
+- **Estimator bias** — some people consistently underestimate, others overestimate. Without calibration, your inputs are skewed before you even start.
+- **Plan volatility** — the plan you estimated against won't be the plan you execute. Priorities shift, scope changes, blockers appear.
+- **Context switching** — a 4-hour task doesn't take 4 hours when it's spread across three days between meetings and other tickets.
+- **Discovery** — you will find things you didn't expect. The question is how much, not whether.
+
+Three-point estimation captures none of this. It gives you a range for the task, not for the delivery.
+
+<RealityFactors client:visible />
+
+## Beta Distributions: Modeling Reality
+
+A beta distribution doesn't just give you a range — it gives you a *shape*. It captures the probability of every possible outcome, weighted by how likely each one is. And unlike a simple optimistic/pessimistic range, a beta distribution can be skewed — reflecting the reality that things are far more likely to take longer than shorter.
+
+When you feed a beta distribution with parameters that account for the real world — availability, bias, concurrency, the inherent uncertainty of discovery work — you stop modeling "how long does this task take?" and start modeling "what's the probability this gets delivered by this date?"
+
+That's a fundamentally different question. And it's the right one.
+
+<BetaDistribution client:visible />
+
+## Rethinking the Inputs
+
+Three-point estimation needs to be rethought. Not tweaked — rethought. The math is fine. The inputs are the problem.
+
+Instead of asking "how long will this take in ideal conditions?", we should be asking "given everything we know about how work actually flows through this team, what does the distribution of possible outcomes look like?"
+
+That's harder to answer. But it's honest. And when you combine honest distributions with the right simulation tools, you get something that actually predicts the future — not perfectly, but far better than your gut.
+
+*In a future post, we'll take these distributions and feed them into something far more interesting.*
