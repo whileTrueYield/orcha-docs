@@ -22,6 +22,40 @@ const featured = allPosts.filter(p => p.data.featured);
 const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 	.slice(0, 3);
+
+/*
+ * Recursively builds an SVG path string representing a branching tree.
+ * Each branch spawns sub-branches per `branches` spec; depthCost > 1 lets
+ * some branches die out earlier, producing the asymmetric "explored more
+ * here than there" feel of an MCTS search tree.
+ */
+type BranchSpec = { angle: number; lengthMult: number; depthCost: number };
+function buildTree(
+	x: number,
+	y: number,
+	angle: number,
+	length: number,
+	depth: number,
+	branches: BranchSpec[],
+): string {
+	if (depth <= 0 || length < 6) return '';
+	const x2 = x + Math.cos(angle) * length;
+	const y2 = y + Math.sin(angle) * length;
+	let path = `M${x.toFixed(1)},${y.toFixed(1)}L${x2.toFixed(1)},${y2.toFixed(1)}`;
+	for (const b of branches) {
+		path += buildTree(x2, y2, angle + b.angle, length * b.lengthMult, depth - b.depthCost, branches);
+	}
+	return path;
+}
+
+const PI = Math.PI;
+
+// Full-page sparse binary skeleton — visually evokes an MCTS search tree
+// growing down through the document. Deep, low-branching, low-contrast.
+const treePath = buildTree(600, 60, PI / 2, 290, 10, [
+	{ angle: -0.5, lengthMult: 0.78, depthCost: 1 },
+	{ angle: 0.5,  lengthMult: 0.78, depthCost: 1 },
+]);
 ---
 
 <html lang="en">
@@ -47,9 +81,9 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 				--gray-900: #1e2028;
 				--gray-800: #24272f;
 				--gray-700: #353841;
-				--gray-400: #888b96;
-				--gray-300: #a0a3ab;
-				--gray-200: #c0c2c7;
+				--gray-400: #a8abb5;
+				--gray-300: #b8bbc3;
+				--gray-200: #d0d2d7;
 				--white: #ffffff;
 			}
 			body {
@@ -108,6 +142,7 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 				letter-spacing: -0.02em;
 				margin-bottom: 1.5rem;
 			}
+			h2 span,
 			.hero h1 span {
 				color: var(--brand);
 			}
@@ -115,7 +150,7 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 				font-size: 1.15rem;
 				color: var(--gray-400);
 				margin-bottom: 2.5rem;
-				max-width: 560px;
+				max-width: 660px;
 			}
 			.hero-buttons {
 				display: flex;
@@ -146,7 +181,12 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 				font-size: 2.2rem;
 				color: var(--white);
 				margin-bottom: 0.75rem;
+				font-family: monospace;
 			}
+			.blog-teaser-card h3 {
+				font-family: monospace;
+			}
+
 			.section-header p {
 				color: var(--gray-400);
 				font-size: 1.1rem;
@@ -154,11 +194,53 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 				margin: 0 auto;
 			}
 
+			/* Page-level MCTS tree background (spans the full document) */
+			body {
+				position: relative;
+				isolation: isolate;
+			}
+			.page-bg {
+				position: absolute;
+				inset: 0;
+				width: 100%;
+				height: 100%;
+				pointer-events: none;
+				z-index: 0;
+				transform: translateY(200px);
+			}
+			.page-tree {
+				width: 100%;
+				height: 100%;
+				stroke: rgba(0, 188, 212, 0.13);
+				stroke-width: 1;
+				fill: none;
+				display: block;
+			}
+			.page-tree path {
+				vector-effect: non-scaling-stroke;
+			}
+			body > nav,
+			body > section,
+			body > footer,
+			body > div:not(.page-bg) {
+				position: relative;
+				z-index: 1;
+			}
+
 			/* Philosophy */
 			.philosophy {
+				position: relative;
+				margin: 4rem 0;
+				padding: 5rem 2rem 4rem;
+				background: radial-gradient(
+					ellipse 1100px 700px at 50% 40%,
+					rgba(0, 188, 212, 0.06) 0%,
+					transparent 65%
+				);
+			}
+			.philosophy-inner {
 				max-width: 1000px;
-				margin: 8rem auto 4rem;
-				padding: 0 2rem;
+				margin: 0 auto;
 			}
 			.philosophy-grid {
 				display: grid;
@@ -166,16 +248,46 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 				gap: 1.5rem;
 			}
 			.philosophy-card {
-				background: var(--gray-900);
+				position: relative;
+				background: rgba(30, 32, 40, 0.25);
 				outline: 1px solid var(--gray-700);
 				outline-offset: -1px;
-				border-radius: 10px;
+				border-radius: 1px;
 				padding: 1.8rem;
+				backdrop-filter: blur(3px);
+				-webkit-backdrop-filter: blur(3px);
+				overflow: hidden;
+				transition: outline-color 0.3s ease, background 0.3s ease;
+			}
+			.philosophy-card::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(
+					135deg,
+					rgba(0, 188, 212, 0.14) 0%,
+					rgba(0, 188, 212, 0) 55%
+				);
+				opacity: 0;
+				transition: opacity 0.4s ease;
+				pointer-events: none;
+			}
+			.philosophy-card > * {
+				position: relative;
+				z-index: 1;
+			}
+			.philosophy-card:hover {
+				outline-color: rgba(0, 188, 212, 0.45);
+				background: rgba(30, 32, 40, 0.4);
+			}
+			.philosophy-card:hover::before {
+				opacity: 1;
 			}
 			.philosophy-card h3 {
 				color: var(--white);
 				font-size: 1rem;
 				margin-bottom: 0.5rem;
+				font-family: monospace;
 			}
 			.philosophy-card p {
 				font-size: 0.925rem;
@@ -255,7 +367,7 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 				background: var(--gray-900);
 				outline: 1px solid var(--gray-700);
 				outline-offset: -1px;
-				border-radius: 10px;
+				border-radius: 1px;
 				padding: 1.5rem;
 				text-decoration: none;
 				transition: outline-color 0.2s;
@@ -287,6 +399,7 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 				font-size: 2.2rem;
 				color: var(--white);
 				margin-bottom: 1rem;
+				font-family: monospace;
 			}
 			.cta p {
 				color: var(--gray-400);
@@ -334,6 +447,15 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 		</style>
 	</head>
 	<body>
+		<div class="page-bg" aria-hidden="true">
+			<svg
+				class="page-tree"
+				viewBox="0 0 1200 3000"
+				preserveAspectRatio="xMidYMin slice"
+			>
+				<path d={treePath} />
+			</svg>
+		</div>
 		<Nav />
 
 		<section class="hero">
@@ -342,8 +464,8 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 				<span>We treat it like one.</span>
 			</h1>
 			<p class="hero-sub">
-				Orcha runs Monte Carlo simulations of your team's workload.
-				Ship dates you can trust — and plans you can change.
+				The project manager that runs Monte Carlo simulations of your
+				team's workload. Ship dates you can trust, and plans you can change.
 			</p>
 			<div class="hero-buttons">
 				<a href="https://app.orcha.run" class="btn btn-primary">Get started</a>
@@ -361,8 +483,9 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 		</div>
 
 		<section class="philosophy">
+			<div class="philosophy-inner">
 			<div class="section-header">
-				<h2>Designed from first principles</h2>
+				<h2>Designed from <span>first principles</span></h2>
 				<p>
 					Every design choice follows from one question: what actually
 					helps you decide?
@@ -417,6 +540,7 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 						something, it's because the simulation needs it.
 					</p>
 				</div>
+			</div>
 			</div>
 		</section>
 
@@ -517,8 +641,8 @@ const featuredPosts = (featured.length >= 3 ? featured : allPosts)
 			 */
 			(function () {
 				const CHARS = '0123456789∑∫∂πσμ±√∞≈≠';
-				const RESOLVE_STAGGER = 35;
-				const CYCLES_PER_CHAR = 4;
+				const RESOLVE_STAGGER = 45;
+				const CYCLES_PER_CHAR = 10;
 				const CYCLE_INTERVAL = 40;
 
 				function scramble(el) {
