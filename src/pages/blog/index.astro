@@ -20,6 +20,11 @@ const posts = (await getCollection('blog', ({ data }) => {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Blog — Orcha</title>
+		<script>
+			window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+			plausible.init()
+		</script>
+
 		<meta name="description" content="Updates, insights, and technical deep-dives from the Orcha team." />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 	</head>

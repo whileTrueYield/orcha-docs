@@ -1,10 +1,10 @@
 /**
- * Act 3 — "The Real Shape"
+ * Act 3, "Your three points already are a beta"
  *
  * Three sliders feeding a proper beta distribution (PERT-Beta method).
- * Shows the PDF curve, shaded area for P(finish ≤ most-likely), and
- * key stats (mean, median, 80th percentile). An optional triangular
- * overlay lets the reader compare the naive model side by side.
+ * Shows the PDF curve and shaded area for P(finish <= most-likely).
+ * The hero is the probability callout: even with the best possible
+ * task-vacuum inputs, the "most likely" estimate rarely beats a coin flip.
  *
  * Exports: BetaDistribution (default React component, no props)
  */
@@ -18,8 +18,6 @@ export function BetaDistribution() {
   const [optimistic, setOptimistic] = useState(3);
   const [mostLikely, setMostLikely] = useState(7);
   const [pessimistic, setPessimistic] = useState(14);
-  const [showBeta, setShowBeta] = useState(true);
-  const [showTri, setShowTri] = useState(false);
 
   const handleOpt = useCallback((v: number) => {
     setOptimistic(v);
@@ -73,7 +71,7 @@ export function BetaDistribution() {
   const betaMedian = range > 0 ? optimistic + betaQuantile(0.5, alpha, beta) * range : optimistic;
   const p80 = range > 0 ? optimistic + betaQuantile(0.8, alpha, beta) * range : optimistic;
 
-  // P(finish ≤ most likely)
+  // P(finish <= most likely)
   const targetStd = range > 0 ? (mostLikely - optimistic) / range : 0.5;
   const probTarget = range > 0 ? betaCDF(targetStd, alpha, beta) : 0.5;
 
@@ -83,18 +81,10 @@ export function BetaDistribution() {
   const meanPDF = range > 0 ? betaPDF(muStdNorm, alpha, beta) : 0;
   const meanY = maxPDF > 0 ? CHART.bottom - (meanPDF / maxPDF) * (CHART.bottom - CHART.top) : CHART.top;
 
-  // Shade clip: area from 0 to most-likely
+  // Shade clip: area from optimistic to most-likely
   const shadeWidth = targetStd * (CHART.right - CHART.left);
 
-  // Triangle overlay
-  const rangeMin = Math.max(0, optimistic - 1);
-  const rangeMax = pessimistic + 1;
-  const triXO = CHART.left + ((optimistic - rangeMin) / (rangeMax - rangeMin)) * (CHART.right - CHART.left);
-  const triXM = CHART.left + ((mostLikely - rangeMin) / (rangeMax - rangeMin)) * (CHART.right - CHART.left);
-  const triXP = CHART.left + ((pessimistic - rangeMin) / (rangeMax - rangeMin)) * (CHART.right - CHART.left);
-  const triPoints = `${triXO},${CHART.bottom} ${triXM},${CHART.top} ${triXP},${CHART.bottom}`;
-
-  // Ticks
+  // Ticks aligned with the beta curve's x-range [optimistic, pessimistic]
   const ticks: { x: number; label: string }[] = [];
   const placed: number[] = [];
   for (const { v, label } of [
@@ -102,7 +92,9 @@ export function BetaDistribution() {
     { v: mostLikely, label: `${mostLikely}d` },
     { v: pessimistic, label: `${pessimistic}d` },
   ]) {
-    const x = CHART.left + ((v - rangeMin) / (rangeMax - rangeMin)) * (CHART.right - CHART.left);
+    const x = range > 0
+      ? CHART.left + ((v - optimistic) / range) * (CHART.right - CHART.left)
+      : CHART.left;
     if (!placed.some((px) => Math.abs(px - x) < 25)) {
       placed.push(x);
       ticks.push({ x, label });
@@ -112,10 +104,10 @@ export function BetaDistribution() {
   return (
     <div style={{ maxWidth: 640, width: "100%", margin: "2rem auto" }}>
       <h3 style={{ color: "var(--white)", fontSize: "1.1rem", fontWeight: 600, marginBottom: 4 }}>
-        The real shape of uncertainty
+        Your three points already are a beta
       </h3>
       <p style={{ color: "var(--gray-400)", fontSize: "0.85rem", marginBottom: 28 }}>
-        Same three inputs — but now modeled as a beta distribution. The curve captures what the triangle hides.
+        Drag the sliders. PERT is doing this math whether you draw the curve or not. Notice how unlikely your "most likely" actually is.
       </p>
 
       <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
@@ -124,22 +116,12 @@ export function BetaDistribution() {
         <SliderInput label="Pessimistic" value={pessimistic} onChange={handlePess} />
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, fontSize: "0.8rem", color: "var(--gray-400)" }}>
-        Show:
-        <ToggleButton label="Beta distribution" active={showBeta} onClick={() => setShowBeta(!showBeta)} color="#7c4dff" />
-        <ToggleButton label="Triangular overlay" active={showTri} onClick={() => setShowTri(!showTri)} color="var(--brand)" />
-      </div>
-
       <div style={{ background: "var(--gray-900)", border: "1px solid var(--gray-700)", borderRadius: 8, padding: "20px 20px 12px" }}>
         <svg viewBox={`0 0 ${CHART.width} ${CHART.height}`} style={{ width: "100%", height: 240, display: "block" }}>
           <defs>
             <linearGradient id="betaGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#7c4dff" stopOpacity={0.35} />
               <stop offset="100%" stopColor="#7c4dff" stopOpacity={0.03} />
-            </linearGradient>
-            <linearGradient id="triGhostGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--brand)" stopOpacity={0.12} />
-              <stop offset="100%" stopColor="var(--brand)" stopOpacity={0.02} />
             </linearGradient>
             <clipPath id="shadeClip">
               <rect x={CHART.left} y={0} width={shadeWidth} height={CHART.height} />
@@ -155,19 +137,11 @@ export function BetaDistribution() {
           <line x1={CHART.left} y1={10} x2={CHART.left} y2={CHART.bottom} stroke="var(--gray-700)" strokeWidth={1} />
           <text x={12} y={100} fill="var(--gray-400)" fontSize={9} textAnchor="middle" transform="rotate(-90,12,100)" fontFamily="Inter,sans-serif">probability density</text>
 
-          {/* Triangle ghost (optional) */}
-          {showTri && (
-            <>
-              <polygon points={triPoints} fill="url(#triGhostGrad)" />
-              <polygon points={triPoints} fill="none" stroke="var(--brand)" strokeWidth={1.5} strokeDasharray="6,4" opacity={0.4} />
-            </>
-          )}
-
-          {/* Beta shaded area */}
-          {showBeta && fillD && <path d={fillD} fill="#7c4dff" opacity={0.15} clipPath="url(#shadeClip)" />}
+          {/* Beta shaded area (<= most likely) */}
+          {fillD && <path d={fillD} fill="#7c4dff" opacity={0.15} clipPath="url(#shadeClip)" />}
 
           {/* Beta curve */}
-          {showBeta && fillD && (
+          {fillD && (
             <>
               <path d={fillD} fill="url(#betaGrad)" />
               <path d={pathD} fill="none" stroke="#7c4dff" strokeWidth={2.5} strokeLinejoin="round" />
@@ -175,7 +149,7 @@ export function BetaDistribution() {
           )}
 
           {/* Mean line */}
-          {showBeta && <line x1={meanX} y1={meanY} x2={meanX} y2={CHART.bottom} stroke="#7c4dff" strokeWidth={1} strokeDasharray="4,3" opacity={0.6} />}
+          <line x1={meanX} y1={meanY} x2={meanX} y2={CHART.bottom} stroke="#7c4dff" strokeWidth={1} strokeDasharray="4,3" opacity={0.6} />
 
           {/* Ticks */}
           {ticks.map(({ x, label }) => (
@@ -187,51 +161,31 @@ export function BetaDistribution() {
         </svg>
       </div>
 
-      {/* Legend */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 12, fontSize: "0.75rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div style={{ width: 16, height: 3, background: "#7c4dff", borderRadius: 1 }} />
-          <span style={{ color: "var(--gray-300)" }}>Beta distribution</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, opacity: showTri ? 1 : 0.4 }}>
-          <div style={{ width: 16, height: 3, background: "var(--brand)", opacity: 0.5, borderRadius: 1 }} />
-          <span style={{ color: "var(--gray-400)" }}>Triangular (naive)</span>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 32, marginTop: 16, fontSize: "0.8rem", color: "var(--gray-400)" }}>
-        <div style={{ textAlign: "center" }}>
-          <span style={{ fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 2 }}>Beta Mean</span>
-          <span style={{ color: "#7c4dff", fontWeight: 600 }}>{betaMean.toFixed(1)}</span> days
-        </div>
-        <div style={{ textAlign: "center" }}>
-          <span style={{ fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 2 }}>Beta Median</span>
-          <span style={{ color: "#7c4dff", fontWeight: 600 }}>{betaMedian.toFixed(1)}</span> days
-        </div>
-        <div style={{ textAlign: "center" }}>
-          <span style={{ fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 2 }}>80% Likely By</span>
-          <span style={{ color: "#7c4dff", fontWeight: 600 }}>{p80.toFixed(1)}</span> days
-        </div>
-      </div>
-
-      {/* Probability callout */}
+      {/* Hero callout: P(finish <= most likely) */}
       <div
         style={{
           textAlign: "center",
-          marginTop: 16,
-          padding: "12px 16px",
+          marginTop: 20,
+          padding: "22px 16px",
           background: "rgba(124, 77, 255, 0.08)",
-          border: "1px solid rgba(124, 77, 255, 0.2)",
+          border: "1px solid rgba(124, 77, 255, 0.25)",
           borderRadius: 8,
-          fontSize: "0.85rem",
-          color: "var(--gray-200)",
         }}
       >
-        Probability of finishing in <strong>{mostLikely}</strong> days (your "most likely"):{" "}
-        <span style={{ color: "#7c4dff", fontWeight: 700, fontSize: "1.1rem" }}>
+        <div style={{ color: "#7c4dff", fontSize: "2.75rem", fontWeight: 700, lineHeight: 1, marginBottom: 8 }}>
           {Math.round(probTarget * 100)}%
-        </span>
+        </div>
+        <div style={{ color: "var(--gray-300)", fontSize: "0.9rem", lineHeight: 1.4 }}>
+          probability the work finishes within your{" "}
+          <strong style={{ color: "var(--white)" }}>{mostLikely}-day</strong> "most likely" estimate
+        </div>
+      </div>
+
+      {/* Secondary stats */}
+      <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 14, fontSize: "0.75rem", color: "var(--gray-500)" }}>
+        <span>mean <span style={{ color: "var(--gray-300)" }}>{betaMean.toFixed(1)}d</span></span>
+        <span>median <span style={{ color: "var(--gray-300)" }}>{betaMedian.toFixed(1)}d</span></span>
+        <span>80% by <span style={{ color: "var(--gray-300)" }}>{p80.toFixed(1)}d</span></span>
       </div>
     </div>
   );
@@ -254,26 +208,5 @@ function SliderInput({ label, value, onChange }: { label: string; value: number;
         className="estimate-slider estimate-slider--purple"
       />
     </div>
-  );
-}
-
-function ToggleButton({ label, active, onClick, color }: { label: string; active: boolean; onClick: () => void; color: string }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        padding: "5px 12px",
-        borderRadius: 5,
-        border: `1px solid ${active ? color : "var(--gray-700)"}`,
-        background: active ? `${color}14` : "transparent",
-        color: active ? color : "var(--gray-400)",
-        fontSize: "0.75rem",
-        fontFamily: "inherit",
-        cursor: "pointer",
-        transition: "all 0.2s",
-      }}
-    >
-      {label}
-    </button>
   );
 }

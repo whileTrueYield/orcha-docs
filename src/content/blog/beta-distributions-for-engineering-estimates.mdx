@@ -1,6 +1,6 @@
 ---
-title: "Three-Point Estimation Solves the Wrong Problem"
-description: "Three-point estimation models task complexity in a vacuum. Beta distributions model delivery probability in reality."
+title: "Your Estimates Aren't Wrong. The Question Is."
+description: "Three-point estimation has always produced a beta distribution. The problem isn't the math, it's that we're using it to estimate the task instead of the delivery."
 date: 2026-06-02
 draft: true
 featured: true
@@ -10,58 +10,66 @@ import { ThreePointEstimate } from "../../components/blog/ThreePointEstimate";
 import { RealityFactors } from "../../components/blog/RealityFactors";
 import { BetaDistribution } from "../../components/blog/BetaDistribution";
 
-# Three-Point Estimation Solves the Wrong Problem
+If you've ever planned a software project, you've probably used [three-point estimation](https://en.wikipedia.org/wiki/Three-point_estimation), optimistic, most likely, pessimistic. [PERT](https://en.wikipedia.org/wiki/Program_evaluation_and_review_technique)-style scheduling has run on those three numbers for sixty years. The math behind it is fine. The numbers people give you are, for the question they're answering, roughly honest.
 
-If you've ever estimated a software project, you've probably used three-point estimation — optimistic, most likely, pessimistic. It's clean, it's simple, and it's wrong. Not because the math is bad, but because the inputs are fiction.
+The problem is the question.
+
+"How long does this task take?" assumes the person doing it exists in a vacuum, fully available, fully focused, working on nothing else, executing a plan that doesn't change. That isn't the delivery question. The delivery question is "when does this ship?", and that depends on the entire system around the task, not the task itself.
 
 ## The Hidden Assumption
 
-Three-point estimation assumes infinite resources, an isolated project, and predictable resource consumption. You estimate how long the *task* takes, as if the person doing it exists in a vacuum — fully available, fully focused, working on nothing else.
+Three-point estimation, as it's commonly used, assumes infinite availability, an isolated project, and predictable resource consumption. You estimate how long the _task_ takes, as if the person doing it has nothing else going on.
 
-The reality? People get sick. They take vacations. They work across timezones. They juggle multiple projects. They aren't available on the dot. Estimators carry biases they aren't even aware of. And plans change — rapidly — because you learn the most the moment you start building.
+The reality? People get sick. They take vacations. They work across timezones. They juggle multiple projects. They aren't available on the dot. Estimators carry biases they aren't even aware of. And plans change, rapidly, because you learn the most the moment you start building.
 
 <ThreePointEstimate client:visible />
 
 ## The Construction Fallacy
 
-This model was borrowed from the construction industry, where it makes more sense. Construction is repetitive — you've poured a thousand foundations, you know how long the next one takes. The unknowns are fewer, and extensive surveys are done upfront to eliminate them.
+This estimation style was borrowed from the construction industry, where it makes more sense. Construction is repetitive, you've poured a thousand foundations, you know how long the next one takes. The unknowns are fewer, and extensive surveys are done upfront to eliminate them.
 
 And yet, even construction fails to predict properly. Projects overrun. Budgets blow up. Despite having far fewer unknowns and far more historical data than we do.
 
-Now imagine what that means for software engineering, where most of what you do is discovery. You're working on the edge — building something that hasn't been built before, solving problems you haven't fully understood yet. You can uncover a lot of unknowns upfront, but you can't uncover all of them. Ever.
+Now imagine what that means for software engineering, where most of what you do is discovery. You're working on the edge, building something that hasn't been built before, solving problems you haven't fully understood yet. You can uncover a lot of unknowns upfront, but you can't uncover all of them. Ever.
 
-## What Three-Point Estimation Gets Wrong
+## The Task Isn't the System
 
-The problem isn't the three points. It's that the three points only model the task — not the system the task lives in.
+The three-point estimate captures the task. It misses everything around it.
 
-What actually determines when work gets delivered?
-
-- **Availability** — is the person actually free to work on this, or are they split across three projects?
-- **Estimator bias** — some people consistently underestimate, others overestimate. Without calibration, your inputs are skewed before you even start.
-- **Plan volatility** — the plan you estimated against won't be the plan you execute. Priorities shift, scope changes, blockers appear.
-- **Context switching** — a 4-hour task doesn't take 4 hours when it's spread across three days between meetings and other tickets.
-- **Discovery** — you will find things you didn't expect. The question is how much, not whether.
+- **Availability**, is the person actually free to work on this, or are they split across three projects?
+- **Estimator bias**, some people consistently underestimate, others overestimate. Without calibration, your inputs are skewed before you even start.
+- **Plan volatility**, the plan you estimated against won't be the plan you execute. Priorities shift, scope changes, blockers appear.
+- **Context switching**, a 4-hour task doesn't take 4 hours when it's spread across three days between meetings and other tickets.
+- **Discovery**, you will find things you didn't expect. The question is how much, not whether.
 
 Three-point estimation captures none of this. It gives you a range for the task, not for the delivery.
 
 <RealityFactors client:visible />
 
-## Beta Distributions: Modeling Reality
+## Why Reality Skews Right
 
-A beta distribution doesn't just give you a range — it gives you a *shape*. It captures the probability of every possible outcome, weighted by how likely each one is. And unlike a simple optimistic/pessimistic range, a beta distribution can be skewed — reflecting the reality that things are far more likely to take longer than shorter.
+Notice something about that list: every factor on it only ever makes things _later_. Context switching doesn't accidentally speed work up. Discovery doesn't shorten the plan. Blockers don't unblock themselves early. Availability surprises trim your runway, they don't extend it.
 
-When you feed a beta distribution with parameters that account for the real world — availability, bias, concurrency, the inherent uncertainty of discovery work — you stop modeling "how long does this task take?" and start modeling "what's the probability this gets delivered by this date?"
+System-level factors are one-directional. That asymmetry is exactly what produces the long right tail you see in real delivery data. It isn't a quirk of the math, it's a property of the world. A task-in-a-vacuum estimate is roughly symmetric because tasks-in-a-vacuum _are_ roughly symmetric. Delivery is skewed because reality only pushes one way.
 
-That's a fundamentally different question. And it's the right one.
+This is what an honest distribution has to capture.
+
+## Three-Point Estimation Already Produces a Beta
+
+Here's the part that's often missed: PERT's three points _are_ the standard way to parameterize a [beta distribution](https://en.wikipedia.org/wiki/Beta_distribution). The familiar `(O + 4M + P) / 6` mean comes from a beta whose shape parameters are derived from your three inputs. This isn't "use a beta instead of three-point estimation", three-point estimation has been a beta the whole time.
 
 <BetaDistribution client:visible />
 
-## Rethinking the Inputs
+And beta is a reasonable shape for delivery, but the reason isn't just that it can skew. It's that it's bounded. The obvious alternative for right-skewed durations is [lognormal](https://en.wikipedia.org/wiki/Log-normal_distribution), with its unbounded tail. But delivery isn't unbounded: a task won't take infinite time, because at some point the project gets cancelled, scope gets cut, or someone else takes it. An unbounded tail keeps assigning probability to outcomes that can't happen, and downstream, when you simulate against it, that phantom mass pushes your confidence dates into fiction. Bounded support isn't a limitation here. It's the point.
 
-Three-point estimation needs to be rethought. Not tweaked — rethought. The math is fine. The inputs are the problem.
+What's wrong is what we feed it. Plug in task-in-a-vacuum numbers and you get the distribution of how long the task takes in a vacuum, a precise answer to a question nobody should be asking. Plug in system-aware numbers, accounting for availability, calibrated bias, expected discovery, plan volatility, and the same machinery answers a different question: "what's the probability this ships by this date?"
 
-Instead of asking "how long will this take in ideal conditions?", we should be asking "given everything we know about how work actually flows through this team, what does the distribution of possible outcomes look like?"
+Same distribution. Different inputs. Different question. Right one.
 
-That's harder to answer. But it's honest. And when you combine honest distributions with the right simulation tools, you get something that actually predicts the future — not perfectly, but far better than your gut.
+## Rethinking the Question
 
-*In a future post, we'll take these distributions and feed them into something far more interesting.*
+Stop asking "how long will this task take in ideal conditions?" Start asking "given everything we know about how work actually flows through this team, what does the distribution of possible delivery dates look like?"
+
+That's harder to answer. It requires calibrating your estimators, modeling availability and concurrency, owning that the plan will shift, and treating discovery as a parameter rather than a surprise. But it's the question that actually predicts delivery, and once you're asking the right question, the math you already had does the rest.
+
+_In a future post, we'll take these distributions and feed them into something far more interesting._
