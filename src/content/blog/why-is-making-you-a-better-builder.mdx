@@ -1,0 +1,49 @@
+---
+title: "Why? Is Making You A Better Builder"
+description: "We treat building software as construction. It's introspection. You don't write a solution, you discover the problem by trying to solve it, and that's why growing software is hard."
+date: 2026-06-11
+draft: false
+featured: true
+---
+
+import { WhyTree } from "../../components/blog/WhyTree";
+
+We treat building software as construction, I know I did. You hear a problem, your mind shifts into gear, it builds the solution, using the tools and patterns it's so familiar with, but while it's a comforting model, it's a model that will rapidly betray you. Building software is introspection. Your first goal should be to get intimate with the problem... actually the problems.
+
+If you wonder why your software is so hard to grow, this is likely why.
+
+## The Symptom Is Not the Problem
+
+Someone asks for a scheduler. So you build one: a Gantt chart, tasks, dependencies, a timeline to drag around. You shipped exactly what was asked, and you solved little. "Scheduler" was the costume the problem wore when it walked in. What they actually wanted was to know when the work will be done, and whether that's soon enough to be worth doing.
+
+So the real problem isn't "draw a schedule." It's _predict the delivery date_. And the only way there is to refuse the question as asked and keep asking why, until each answer is a smaller, more defined problem than the last, rooted in the reality of past experiences.
+
+<WhyTree client:visible />
+
+## A Solution Has a Shape
+
+Look at what you just unfolded. Not a single thing, a structure. One felt pain at the top, three causes beneath it, eight concrete leaves at the bottom. The leaves are where you actually build, each one small enough that a single focused solution can finish it.
+
+Those solutions stack: leaves resolve the branch above them, branches resolve the root. _Predict the delivery date_ isn't something you write, it's what stands once everything beneath it is in place.
+
+And notice what shifts as you go down. The root is the kind of problem you're never really done with, there's always a sharper version, a faster prediction, a clearer view. The leaves are different. A reminder either works or it doesn't. A spec either gets read or it doesn't. At the base, "done" means something, you finish the problem and move on.
+
+This is the simplicity worth wanting, and it has nothing to do with DRY. DRY is a property of the text on the screen. Real simplicity is a property of the base: solutions small enough to fit in your head, sharp enough to actually finish, that you can layer on top of with confidence. Repetition disappears as a side effect. It was never the goal.
+
+Build only the top, and you've shipped a costume with nothing inside it.
+
+## Where the Dragons Live
+
+Not every layer is the same kind of problem. Some are charted territory, a timeline, a dependency graph, the estimation math, you've built them before and the work goes smooth. But keep asking why and you walk off the edge of the map, into people, into an understanding that keeps shifting as you build, into an algorithm that might not exist yet and has to be invented or found. The old cartographers had a name for the blank past the coastline. _Hic Sunt Dracones 🐉_ (Here be dragons).
+
+The edge is the whole point. It's where the problem actually resists you, where there's nothing to copy because the thing hasn't been done, where understanding is the only tool that still works.
+
+And it's exactly where AI can't lead. Ask an AI to build a scheduler and it will, fast and convincing. It's a brilliant cartographer of charted land, the surface and the known layers beneath. AI knows what's been discovered (which is a lot), but it's not an explorer, and in software, copying an existing solution rarely earns its keep, the value lives at the edge. Point it at the introspection, "why does the date matter, and why does _that_", and it becomes a partner in taking the problem apart instead of a faster way to build the wrong thing.
+
+## Why Growth Hurts
+
+Build only the top, and every new requirement lands on a foundation that was never poured. So you bolt one on, then another, each one making the next harder. That's entropy, the feeling that the software is always a misfit, a patchwork of odd solutions. Build the base from real understanding and a new requirement is just a new arrangement of components you already own. Foundations compound.
+
+So notice what was never on your list of things to build: "predict, in seconds, how long the work will take." You don't build that. You resolve the branches beneath it, and the fast, trustworthy prediction is what's left standing once those are in place. You didn't build the answer. You resolved its components, and the answer emerged. The same way the problem did.
+
+You don't build software. You discover it, one _why_ at a time. And the depth of your understanding is the height of what you can build on top.
