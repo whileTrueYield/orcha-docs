@@ -1,7 +1,7 @@
 /**
  * The Why Tree
  *
- * The interactive centerpiece of "You Don't Build Software, You Discover It".
+ * The interactive centerpiece of "Why? Is Making You a Better Builder".
  * A felt pain ("I can't predict release dates") decomposes, one "why" at a
  * time, into a tree of smaller, more concrete causes.
  *
@@ -511,7 +511,7 @@ export function WhyTree() {
                 <span className="why-label">
                   <ScrambleText
                     key={`sum-${session}`}
-                    text={`1 problem became ${TOTAL_LEAVES} addresseable causes`}
+                    text={`1 problem became ${TOTAL_LEAVES} addressable causes`}
                     startDelay={200}
                     onDone={() => setSummaryDone(true)}
                   />
