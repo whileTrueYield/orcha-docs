@@ -40,6 +40,10 @@ The backend is Node.js/TypeScript with Hocuspocus handling real-time collaborati
 
 All services run on a single machine. Traefik is the only container that binds to ports 80 and 443.
 
+## Connect a coding agent
+
+Your self-hosted instance exposes the same external surface as the hosted service: a [REST API](/rest-api/) and an [MCP server](/mcp-server/) under your backend's `/api` path. Connect a coding agent with a Personal Access Token, or a consumer Claude client over [OAuth](/oauth-connect/) — note that OAuth requires Orcha to be served over HTTPS, which the Traefik setup above already provides.
+
 ## Email
 
 Orcha needs an email provider for invitations and notifications. The setup script supports two options:
