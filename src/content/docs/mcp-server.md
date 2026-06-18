@@ -48,7 +48,7 @@ Every tool is tenant-scoped to the connection's Role and returns LLM-shaped flat
 
 ### Write — act on what it finds
 
-- **`create_ticket`** / **`update_ticket`** — capture a new ticket, or patch an existing one's fields.
+- **`create_ticket`** / **`update_ticket`** — capture a new ticket, or patch an existing one's fields. `create_ticket` can fully form a ticket in one call — seed its Markdown `body` and assign an `ownerId` alongside the title, sparing follow-up writes — and every ticket it returns carries a direct `url` you can hand the user to open it.
 - **`transition_ticket`** — drive a ticket through its lifecycle: schedule it, start a workflow stage, advance to the next stage, or close / cancel it.
 - **`update_ticket_body`** / **`update_project_body`** — write the Markdown body with optimistic concurrency: the write conditions on the version you read, and a concurrent edit comes back as a conflict to rebase on — never a silent overwrite.
 
