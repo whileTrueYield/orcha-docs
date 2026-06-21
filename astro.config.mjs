@@ -18,6 +18,12 @@ export default defineConfig({
 				{ icon: 'pen', label: 'Blog', href: '/blog' },
 			],
 			customCss: ['./src/styles/custom.css'],
+			head: [
+				{
+					tag: 'script',
+					attrs: { type: 'module', src: '/terminal-prompts.js' },
+				},
+			],
 			sidebar: [
 				{
 					label: 'Getting Started',
@@ -72,9 +78,9 @@ export default defineConfig({
 					label: 'API & Integrations',
 					items: [
 						{ label: 'Overview', slug: 'api-overview' },
-						{ label: 'REST API', slug: 'rest-api' },
-						{ label: 'MCP Server', slug: 'mcp-server' },
 						{ label: 'OAuth Connect', slug: 'oauth-connect' },
+						{ label: 'MCP Server', slug: 'mcp-server' },
+						{ label: 'REST API', slug: 'rest-api' },
 					],
 				},
 				{

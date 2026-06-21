@@ -202,14 +202,119 @@ html {
 	word-break: break-word;
 }
 
-/* ─── Code blocks ─── */
+/* ─── Code blocks (plain <pre> only) ─── */
 
-.sl-markdown-content pre {
+.sl-markdown-content pre:not(.expressive-code pre) {
 	border: 1px solid var(--sl-color-gray-5);
 	border-radius: 0.6rem;
 	font-size: 0.875rem;
 	line-height: 1.7;
 	padding: 1em 1.25em;
+}
+
+/* ─── Expressive Code frames ─── */
+
+.sl-markdown-content .expressive-code {
+	margin-block: 1.25em;
+}
+
+.sl-markdown-content .expressive-code .frame {
+	--ec-brdRad: 0.55rem;
+	border-radius: calc(var(--ec-brdRad) + var(--ec-brdWd));
+	box-shadow:
+		0 1px 0 color-mix(in srgb, var(--sl-color-white) 4%, transparent),
+		0 14px 36px -18px color-mix(in srgb, var(--sl-color-black) 55%, transparent);
+	overflow: hidden;
+}
+
+.sl-markdown-content .expressive-code .ec-line .code {
+	font-family: var(--sl-font-mono);
+}
+
+/* Terminal window chrome */
+.sl-markdown-content .expressive-code .frame.is-terminal .header {
+	justify-content: flex-start;
+	min-height: 2.35rem;
+	padding-block: 0.7rem;
+	padding-inline: 1rem;
+	background: linear-gradient(
+		180deg,
+		color-mix(in srgb, var(--sl-color-gray-5) 45%, var(--sl-color-gray-6)),
+		var(--sl-color-gray-6)
+	);
+	border-color: color-mix(in srgb, var(--sl-color-gray-4) 28%, var(--sl-color-gray-5));
+}
+
+.sl-markdown-content .expressive-code .frame.is-terminal .header::before {
+	width: 0.68rem;
+	height: 0.68rem;
+	line-height: 0;
+	border-radius: 50%;
+	background-color: #ff5f57;
+	opacity: 1;
+	-webkit-mask-image: none;
+	mask-image: none;
+	box-shadow:
+		1.05rem 0 0 #febc2e,
+		2.1rem 0 0 #28c840;
+}
+
+.sl-markdown-content .expressive-code .frame.is-terminal .header::after {
+	border-bottom-color: color-mix(in srgb, var(--sl-color-gray-4) 32%, var(--sl-color-gray-5));
+}
+
+.sl-markdown-content .expressive-code .frame.is-terminal pre {
+	background: color-mix(in srgb, var(--sl-color-gray-6) 82%, var(--sl-color-black));
+	border-color: color-mix(in srgb, var(--sl-color-gray-4) 28%, var(--sl-color-gray-5));
+}
+
+.sl-markdown-content .expressive-code .frame.is-terminal {
+	--terminal-header-height: 2.35rem;
+	--button-spacing: calc((var(--terminal-header-height) - 2rem) / 2);
+}
+
+.sl-markdown-content .expressive-code .frame.is-terminal .copy {
+	inset-block-start: calc(var(--ec-brdWd) + var(--button-spacing));
+	z-index: 2;
+}
+
+.sl-markdown-content .expressive-code .frame.is-terminal .copy button {
+	background: color-mix(in srgb, var(--sl-color-gray-5) 50%, transparent);
+}
+
+.sl-markdown-content .expressive-code .frame.is-terminal .copy button div {
+	background: color-mix(in srgb, var(--sl-color-gray-4) 20%, transparent);
+}
+
+.sl-markdown-content .expressive-code .frame.is-terminal :nth-child(1 of .ec-line) .code {
+	padding-inline-end: 1.15rem;
+}
+
+.sl-markdown-content .expressive-code .frame.is-terminal .ec-line .code {
+	padding-inline: 1.15rem;
+}
+
+.sl-markdown-content .expressive-code .frame.is-terminal .ec-prompt {
+	color: var(--sl-color-accent);
+	opacity: 0.9;
+	user-select: none;
+	-webkit-user-select: none;
+	pointer-events: none;
+}
+
+/* Non-terminal code blocks */
+.sl-markdown-content .expressive-code .frame:not(.is-terminal) pre {
+	background: var(--sl-color-gray-6);
+	border-color: color-mix(in srgb, var(--sl-color-gray-4) 28%, var(--sl-color-gray-5));
+}
+
+:root[data-theme="light"] .sl-markdown-content .expressive-code .frame.is-terminal .header {
+	background: linear-gradient(180deg, #e8eaef, var(--sl-color-gray-6));
+}
+
+:root[data-theme="light"] .sl-markdown-content .expressive-code .frame.is-terminal pre,
+:root[data-theme="light"] .sl-markdown-content .expressive-code .frame:not(.is-terminal) pre {
+	background: var(--sl-color-gray-7);
 }
 
 /* ─── Images / screenshots ─── */
