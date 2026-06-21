@@ -27,37 +27,6 @@ Self-hosting? Swap `https://api.orcha.run/mcp` for your domain's `/api/mcp` path
 
 <Tabs>
 
-<TabItem label="ChatGPT">
-
-ChatGPT connects over OAuth — no `Authorization` header, no pasted token. On first use, ChatGPT discovers Orcha's OAuth server, opens your browser, and stores the tokens Orcha issues after you approve. Enable [developer mode](https://help.openai.com/en/articles/12584461-developer-mode-and-mcp-apps-in-chatgpt) first:
-
-1. **Settings → Apps & Connectors → Advanced settings** — toggle **Developer mode** on.
-2. **Settings → Connectors → Create**.
-3. Set **Connector URL** to `https://api.orcha.run/mcp` and save.
-4. Open a new chat, click **+** near the composer → **More**, and enable the Orcha connector.
-5. On first use, approve the connection in your browser — choose your organization / Role and **read** or **read + write** access on Orcha's consent screen.
-
-See [OAuth Connect](/oauth-connect/) for what happens during approval and how to revoke access later.
-
-</TabItem>
-
-<TabItem label="Claude">
-
-Add Orcha as a **custom connector** pointing at the MCP endpoint — no `Authorization` header. On first use, the client discovers Orcha's OAuth server, opens your browser, and stores the tokens Orcha issues after you approve:
-
-```
-https://api.orcha.run/mcp
-```
-
-- **Claude Desktop:** Settings → Connectors → Add custom connector.
-- **claude.ai:** Settings → Connectors → Add custom connector.
-
-Approve the connection on Orcha's consent screen when prompted. Full walkthrough: [OAuth Connect](/oauth-connect/).
-
-For **Claude Code**, see its own tab — it connects from the terminal.
-
-</TabItem>
-
 <TabItem label="Claude Code">
 
 Claude Code speaks MCP OAuth. Add Orcha with **no** `Authorization` header, then approve from inside a session:
@@ -83,6 +52,37 @@ Run `/mcp`, pick **orcha → Authenticate**, and approve in the browser. Claude 
   }
 }
 ```
+
+</TabItem>
+
+<TabItem label="Claude Desktop">
+
+Add Orcha as a **custom connector** pointing at the MCP endpoint — no `Authorization` header. On first use, the client discovers Orcha's OAuth server, opens your browser, and stores the tokens Orcha issues after you approve:
+
+```
+https://api.orcha.run/mcp
+```
+
+- **Claude Desktop:** Settings → Connectors → Add custom connector.
+- **claude.ai:** Settings → Connectors → Add custom connector.
+
+Approve the connection on Orcha's consent screen when prompted. Full walkthrough: [OAuth Connect](/oauth-connect/).
+
+For **Claude Code**, see its own tab — it connects from the terminal.
+
+</TabItem>
+
+<TabItem label="ChatGPT">
+
+ChatGPT connects over OAuth — no `Authorization` header, no pasted token. On first use, ChatGPT discovers Orcha's OAuth server, opens your browser, and stores the tokens Orcha issues after you approve. Enable [developer mode](https://help.openai.com/en/articles/12584461-developer-mode-and-mcp-apps-in-chatgpt) first:
+
+1. **Settings → Apps & Connectors → Advanced settings** — toggle **Developer mode** on.
+2. **Settings → Connectors → Create**.
+3. Set **Connector URL** to `https://api.orcha.run/mcp` and save.
+4. Open a new chat, click **+** near the composer → **More**, and enable the Orcha connector.
+5. On first use, approve the connection in your browser — choose your organization / Role and **read** or **read + write** access on Orcha's consent screen.
+
+See [OAuth Connect](/oauth-connect/) for what happens during approval and how to revoke access later.
 
 </TabItem>
 
