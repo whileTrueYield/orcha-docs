@@ -1,13 +1,13 @@
 ---
 title: API & Integrations Overview
-description: How external clients reach Orcha — the REST API and MCP server, authenticated by Personal Access Tokens or OAuth, where one token always maps to one Role and one tenant.
+description: How external clients reach Orcha — the REST API and MCP server, authenticated over OAuth (preferred) or a Personal Access Token (the alternative), where one credential always maps to one Role and one tenant.
 ---
 
 :::tip[The principle]
 One token, one Role, one tenant. Every external credential resolves to a single Role — your membership in one organization — so identity and tenant scope come for free. There is no separate "which org?" to get wrong.
 :::
 
-Orcha exposes two ways for software outside the app to reach your workspace, and two ways to authenticate. Pick the surface that matches your client, then the auth method that matches how it holds credentials.
+Orcha exposes two ways for software outside the app to reach your workspace. For the MCP server, **OAuth is the preferred way to connect** — approve once in the browser and the client handles the rest. A **Personal Access Token** is the alternative, for the REST API and for agents that can't run MCP OAuth (or whenever you'd rather hand a client a token).
 
 ## Two surfaces
 
@@ -16,10 +16,10 @@ Orcha exposes two ways for software outside the app to reach your workspace, and
 
 The MCP server is not a one-to-one mirror of the REST API. It is a deliberately small, agent-shaped subset — the operations an agent needs to orient itself and move work forward.
 
-## Two ways to authenticate
+## Preferred and alternative
 
-- **Personal Access Token (PAT)** — a long-lived token you mint in the app and paste into a client. Best for scripts and coding agents (Claude Code, Cursor). Works for both the REST API and the MCP server.
-- **[OAuth](/oauth-connect/)** — for consumer clients like Claude Desktop and the claude.ai connector, which don't take a pasted token. The client connects, you approve on a consent screen, and no token is ever shown. OAuth is for the MCP server.
+- **[OAuth](/oauth-connect/)** *(preferred)* — ChatGPT, Claude Desktop, claude.ai, and OAuth-capable coding agents like Claude Code and Cursor discover Orcha's OAuth server from the MCP endpoint, open your browser for a one-time approval, and receive tokens from Orcha automatically. You never paste anything; the client stores the tokens and sends them on each request.
+- **Personal Access Token** *(the alternative)* — a long-lived token you mint in the app and paste into a client. For the [REST API](/rest-api/), for agents that can't run MCP OAuth (Grok, for one), and any time you'd rather hand a client a token than run the browser flow.
 
 A PAT (and an OAuth grant) can be **read-only**: it can call every read operation but is refused on every write.
 
@@ -28,8 +28,8 @@ A PAT (and an OAuth grant) can be **read-only**: it can call every read operatio
 | I want to… | Surface | Auth |
 |------------|---------|------|
 | Script against Orcha from my own code | REST API | PAT |
-| Connect Claude Code / Cursor to my workspace | MCP server | PAT |
-| Connect Claude Desktop or the claude.ai connector | MCP server | OAuth |
+| Connect ChatGPT, Claude Desktop, claude.ai, Claude Code, or Cursor | MCP server | OAuth |
+| Connect Grok (or any agent that can't run the browser flow) | MCP server | PAT (alternative) |
 | Give a token read-only access | either | read-only PAT, or `read` scope |
 
 ## Where this is documented

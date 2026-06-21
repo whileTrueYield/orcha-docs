@@ -1,13 +1,15 @@
 ---
 title: OAuth Connect
-description: Connect a consumer Claude client — Claude Desktop or the claude.ai connector — to Orcha over OAuth, with no pasted token. Orcha is its own authorization server, with a consent screen and revocable connected apps.
+description: Connect ChatGPT, Claude Desktop, claude.ai, or another MCP OAuth client to Orcha — no pasted token. Orcha is its own authorization server, with a consent screen and revocable connected apps.
 ---
 
 :::tip[The principle]
-No third-party login, no pasted token. Orcha is its own authorization server, so connecting a consumer client is a single browser approval — and you can cut it off again just as fast.
+No third-party login, no pasted token. Orcha is its own authorization server, so connecting an MCP client is a single browser approval — and you can cut it off again just as fast.
 :::
 
-Some clients — **Claude Desktop** and the **claude.ai connector** — don't take a pasted token. They connect over OAuth: the client opens a browser to Orcha, you approve once on a consent screen, and no token is ever shown or stored by hand. This page is for those clients. For Claude Code, Cursor, and scripts, use a [Personal Access Token](/mcp-server/) instead.
+**OAuth is the preferred way to connect to the [MCP server](/mcp-server/).** Point your client at the MCP endpoint with no `Authorization` header; on first use it discovers Orcha's OAuth server, opens your browser, and you approve once on the consent screen. Orcha then issues access and refresh tokens to the **client**, which stores them and sends `Authorization: Bearer …` on every MCP request. You never see, copy, or paste those tokens.
+
+This works with **ChatGPT**, **Claude Desktop**, the **claude.ai connector**, and coding agents that speak MCP OAuth, including **Claude Code** and **Cursor**. An agent that can't run a browser flow (Grok, for one) can use the [alternative: a Personal Access Token](/mcp-server/#the-alternative-personal-access-token).
 
 ## Connect a client
 
@@ -17,6 +19,7 @@ Add Orcha as a **custom connector** pointing at the MCP endpoint, with **no** `A
 https://api.orcha.run/mcp
 ```
 
+- **ChatGPT:** Settings → Connectors → Create, then enable in a chat. See [MCP Server → ChatGPT](/mcp-server/#add-to-your-agent) for developer-mode setup.
 - **Claude Desktop:** Settings → Connectors → Add custom connector.
 - **claude.ai:** Settings → Connectors → Add custom connector.
 
@@ -28,7 +31,7 @@ Orcha is its **own** authorization server — there is no external identity prov
 
 1. **Sign in** to Orcha (if you aren't already).
 2. On the **consent screen**, choose which **organization / Role** the app acts as — a Role is your membership in one org, so this also pins the tenant — and choose **read** or **read + write** access.
-3. **Approve.** The client connects; no token is ever shown or pasted.
+3. **Approve.** Orcha issues tokens to the client; it attaches them as `Authorization: Bearer …` on later MCP requests. You never see or paste them.
 
 ## Scopes
 
@@ -46,7 +49,7 @@ Every approval becomes a **connected app** — one grant binding one Role and on
 ## HTTPS is required
 
 :::caution[OAuth needs HTTPS]
-The authorization server refuses a non-HTTPS issuer (except on `localhost`), so consumer OAuth clients only work once Orcha is served over TLS. On the hosted service this is already the case. Self-hosting behind plain HTTP? Use a [Personal Access Token](/mcp-server/) instead — or terminate TLS (the default Traefik setup in the [self-hosting guide](/self-hosting/) does this for you).
+The authorization server refuses a non-HTTPS issuer (except on `localhost`), so consumer OAuth clients only work once Orcha is served over TLS. On the hosted service this is already the case. Self-hosting behind plain HTTP? Use the [alternative: a Personal Access Token](/mcp-server/#the-alternative-personal-access-token) — or terminate TLS (the default Traefik setup in the [self-hosting guide](/self-hosting/) does this for you).
 :::
 
 ## The "why"

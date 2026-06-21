@@ -1,0 +1,149 @@
+---
+title: MCP Server
+description: Connect ChatGPT, Claude, Grok, or another agent to your Orcha workspace over the Model Context Protocol — a curated set of read and write tools. OAuth is the preferred way to connect; a Personal Access Token is the alternative.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+:::tip[The principle]
+Give an agent just enough to orient itself and move work forward — no more. The MCP server is a curated subset of Orcha, not a mirror of every operation, so the agent's choices stay legible and its blast radius stays small.
+:::
+
+The **Orcha MCP Server** is a [Model Context Protocol](https://modelcontextprotocol.io) endpoint at `/mcp`. It lets a coding agent ask "who am I?" and "what should I work on next?", then act on the answer — creating, updating, and transitioning tickets and editing their Markdown bodies.
+
+## Connect over OAuth
+
+Orcha's MCP server follows the [MCP authorization spec](https://modelcontextprotocol.io/specification/draft/basic/authorization): OAuth 2.1, with Orcha as its own authorization server. **This is the preferred way to connect** — point your client at the endpoint, approve once in the browser, and you're done:
+
+1. Set the connector URL to `https://api.orcha.run/mcp` — **no** `Authorization` header.
+2. On first use, the client discovers Orcha's OAuth endpoints, opens your browser, and you approve on the consent screen.
+3. Orcha issues access and refresh tokens to the **client**. The client stores them and sends `Authorization: Bearer …` on every MCP request. You never see, copy, or paste these tokens.
+
+Each approval becomes a **connected app** in **avatar menu → Connected Apps**. See [OAuth Connect](/oauth-connect/) for the full walkthrough, scopes, revocation, and HTTPS requirements.
+
+Self-hosting? Swap `https://api.orcha.run/mcp` for your domain's `/api/mcp` path in every example on this page.
+
+## Add to your agent
+
+<Tabs>
+
+<TabItem label="Claude Code">
+
+Claude Code speaks MCP OAuth. Add Orcha with **no** `Authorization` header, then approve from inside a session:
+
+```bash
+claude mcp add --transport http orcha https://api.orcha.run/mcp
+```
+
+Run `/mcp`, pick **orcha → Authenticate**, and approve in the browser. Claude Code discovers Orcha's OAuth server, registers itself, and stores the tokens Orcha issues, refreshing them automatically. The same `/mcp` panel shows the connection status.
+
+**Prefer a token?** When you'd rather not run the browser flow, or you want to commit a project-scoped config your team shares, use the [alternative](#the-alternative-personal-access-token): a Personal Access Token in a `.mcp.json` at your repo root (team members are prompted to approve it on first use):
+
+```json
+{
+  "mcpServers": {
+    "orcha": {
+      "type": "http",
+      "url": "https://api.orcha.run/mcp",
+      "headers": {
+        "Authorization": "Bearer orcha_pat_your_token_here"
+      }
+    }
+  }
+}
+```
+
+</TabItem>
+
+<TabItem label="Claude Desktop">
+
+Add Orcha as a **custom connector** pointing at the MCP endpoint — no `Authorization` header. On first use, the client discovers Orcha's OAuth server, opens your browser, and stores the tokens Orcha issues after you approve:
+
+```
+https://api.orcha.run/mcp
+```
+
+- **Claude Desktop:** Settings → Connectors → Add custom connector.
+- **claude.ai:** Settings → Connectors → Add custom connector.
+
+Approve the connection on Orcha's consent screen when prompted. Full walkthrough: [OAuth Connect](/oauth-connect/).
+
+For **Claude Code**, see its own tab — it connects from the terminal.
+
+</TabItem>
+
+<TabItem label="ChatGPT">
+
+ChatGPT connects over OAuth — no `Authorization` header, no pasted token. On first use, ChatGPT discovers Orcha's OAuth server, opens your browser, and stores the tokens Orcha issues after you approve. Enable [developer mode](https://help.openai.com/en/articles/12584461-developer-mode-and-mcp-apps-in-chatgpt) first:
+
+1. **Settings → Apps & Connectors → Advanced settings** — toggle **Developer mode** on.
+2. **Settings → Connectors → Create**.
+3. Set **Connector URL** to `https://api.orcha.run/mcp` and save.
+4. Open a new chat, click **+** near the composer → **More**, and enable the Orcha connector.
+5. On first use, approve the connection in your browser — choose your organization / Role and **read** or **read + write** access on Orcha's consent screen.
+
+See [OAuth Connect](/oauth-connect/) for what happens during approval and how to revoke access later.
+
+</TabItem>
+
+<TabItem label="Grok">
+
+Grok doesn't run MCP OAuth yet — use the [alternative](#the-alternative-personal-access-token): a Personal Access Token. Add Orcha with one command:
+
+```bash
+grok mcp add --transport http orcha https://api.orcha.run/mcp \
+  --header "Authorization: Bearer orcha_pat_your_token_here"
+```
+
+Verify the connection:
+
+```bash
+grok mcp doctor orcha
+```
+
+**Or** add it to `~/.grok/config.toml` (or `.grok/config.toml` in a project you want to share with your team):
+
+```toml
+[mcp_servers.orcha]
+url = "https://api.orcha.run/mcp"
+headers = { Authorization = "Bearer orcha_pat_your_token_here" }
+```
+
+Grok also reads Claude Code's `.mcp.json` and Cursor's `.cursor/mcp.json` if you already have Orcha configured there.
+
+</TabItem>
+
+</Tabs>
+
+Every tool is tenant-scoped to the connection's Role and returns LLM-shaped flat JSON. A **read-only** connection can call every read tool but is refused on the writes. The connection is refused outright if its credential is missing, malformed, or invalid.
+
+## The alternative: Personal Access Token
+
+When your agent can't run the OAuth browser flow (Grok, for one), or you'd simply rather hand it a token, mint one in the app from **avatar menu → API Tokens** and paste it into the agent's config wherever you see `orcha_pat_your_token_here` above. It's also how you authenticate the [REST API](/rest-api/).
+
+## The tools
+
+### Read — orient and understand the work
+
+- **`whoami`** — your role, the user and organization you act for, and whether your token is read-only.
+- **`next_tickets`** — your work queue in scheduler priority order, each ticket paired with the next workflow state to advance it into.
+- **`list_tickets`** — find tickets by project, status, stage, assignee, or search, paginated.
+- **`get_ticket`** — a single ticket's full detail: estimate/ETA, workflow states with three-point estimates, dependency edges, and the Markdown body.
+- **`get_ticket_body`** / **`get_project_body`** — just the Markdown body and its version (the version a later body write conditions on).
+- **`list_projects`** — find projects by search or parent, paginated.
+- **`get_project`** — a single project's detail and its parent/children edges.
+- **`list_products`** — the products you can file work against: name, code, description, and their workflows.
+- **`list_workflows`** — workflow stage sequences, optionally filtered to one product.
+- **`get_schedule`** — your outstanding scheduled work and its ETAs.
+
+### Write — act on what it finds
+
+- **`create_ticket`** / **`update_ticket`** — capture a new ticket, or patch an existing one's fields. `create_ticket` can fully form a ticket in one call — seed its Markdown `body` and assign an `ownerId` alongside the title, sparing follow-up writes — and every ticket it returns carries a direct `url` you can hand the user to open it.
+- **`transition_ticket`** — drive a ticket through its lifecycle: schedule it, start a workflow stage, advance to the next stage, or close / cancel it.
+- **`update_ticket_body`** / **`update_project_body`** — write the Markdown body with optimistic concurrency: the write conditions on the version you read, and a concurrent edit comes back as a conflict to rebase on — never a silent overwrite.
+
+## How it's served
+
+The MCP server runs inside the Orcha backend and shares the same execution path as the [REST API](/rest-api/) — so the two never disagree about what an operation does. It is stateless [Streamable HTTP](https://modelcontextprotocol.io/specification): there is no session to keep alive, each request carries its own credential.
+
+The full architecture — why the MCP server lives in the backend and reuses the `/v1` executor — is in [ADR 0008](https://github.com/whileTrueYield/orcha/blob/main/docs/adr/0008-mcp-server-in-backend-sharing-the-v1-executor.md).
