@@ -43,8 +43,6 @@ See [OAuth Connect](/oauth-connect/) for what happens during approval and how to
 
 <TabItem label="Claude">
 
-#### Claude Desktop & claude.ai
-
 Add Orcha as a **custom connector** pointing at the MCP endpoint — no `Authorization` header. On first use, the client discovers Orcha's OAuth server, opens your browser, and stores the tokens Orcha issues after you approve:
 
 ```
@@ -56,7 +54,11 @@ https://api.orcha.run/mcp
 
 Approve the connection on Orcha's consent screen when prompted. Full walkthrough: [OAuth Connect](/oauth-connect/).
 
-#### Claude Code
+For **Claude Code**, see its own tab — it connects from the terminal.
+
+</TabItem>
+
+<TabItem label="Claude Code">
 
 Claude Code speaks MCP OAuth. Add Orcha with **no** `Authorization` header, then approve from inside a session:
 
