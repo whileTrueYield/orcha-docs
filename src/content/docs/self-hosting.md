@@ -24,6 +24,18 @@ make prod
 
 The setup script walks you through configuration: domain name, email provider, admin credentials, and secrets. It generates your `.env` file and TLS certificates are handled automatically on first boot.
 
+## Encryption at rest
+
+Orcha encrypts stored secrets at rest with AES-256, and the backend **will not boot** without a key. Set `ORCHA_ENCRYPTION_KEY` in your `.env` to a real, 32-byte base64 value, unique per environment:
+
+```bash
+openssl rand -base64 32
+```
+
+:::caution[Set this before first boot, and don't change it]
+Rotating the key invalidates everything previously encrypted with the old one, and there is no rotation tooling yet, so treat it as fixed for the life of the environment. Keep it out of version control and back it up alongside your database.
+:::
+
 ## Architecture
 
 Orcha runs as a [Docker Compose](https://docs.docker.com/compose/) stack behind a [Traefik](https://traefik.io/traefik/) reverse proxy. Traefik handles automatic TLS via [Let's Encrypt](https://letsencrypt.org/) and routes traffic by path:
