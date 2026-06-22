@@ -78,6 +78,7 @@ export default defineConfig({
 					label: 'API & Integrations',
 					items: [
 						{ label: 'Overview', slug: 'api-overview' },
+						{ label: 'GitHub', slug: 'github' },
 						{ label: 'OAuth Connect', slug: 'oauth-connect' },
 						{ label: 'MCP Server', slug: 'mcp-server' },
 						{ label: 'REST API', slug: 'rest-api' },
